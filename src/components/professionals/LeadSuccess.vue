@@ -58,7 +58,7 @@ const copy = professionalsCopy.form
     font-size: 2.2rem;
     @include flex(row, center, center);
     margin-bottom: 0.6rem;
-    animation: pop 0.7s cubic-bezier(0.34, 1.8, 0.64, 1) both;
+    animation: pop 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 
     span {
       position: absolute;
