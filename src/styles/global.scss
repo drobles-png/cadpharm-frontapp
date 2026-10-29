@@ -220,3 +220,105 @@ label {
     transition-duration: 0.01ms !important;
   }
 }
+
+// ─── CadPharm: base vibrante ───────────────────────────────────────────
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.btn {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-size: 0.92rem;
+
+  &--primary:hover {
+    box-shadow: $shadow-glow;
+  }
+
+  &--blue {
+    background: $brand-blue;
+    color: $surface;
+
+    &:hover {
+      background: $brand-blue-deep;
+      transform: translateY(-1px);
+    }
+  }
+
+  &--light {
+    background: $surface;
+    color: $ink;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $shadow-md;
+    }
+  }
+
+  &--lg {
+    padding: 1.05rem 2.1rem;
+    font-size: 1rem;
+  }
+
+  &--block {
+    width: 100%;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+// Transición de páginas: sube y se desvanece, sin saltos
+.page-enter-active {
+  transition:
+    opacity 0.45s $ease,
+    transform 0.45s $ease;
+}
+.page-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+// Revelado al hacer scroll: el composable useReveal agrega .is-visible
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s $ease,
+    transform 0.8s $ease;
+  transition-delay: var(--reveal-delay, 0s);
+
+  &.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @include reduced-motion {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: transform 0.5s $ease;
+}
+.slide-right-enter-from,
+.slide-right-leave-to {
+  transform: translateX(100%);
+}
