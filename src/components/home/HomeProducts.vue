@@ -40,7 +40,7 @@ const copy = homeCopy.products
 <style scoped lang="scss">
 .products {
   @include container(1280px);
-  padding-block: $space-section;
+  padding-block: $space-section $space-xl;
 
   &__head {
     @include flex(column, flex-start, space-between, 1.5rem);
