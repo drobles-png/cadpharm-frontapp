@@ -52,7 +52,7 @@ useStoryScroll(root, toRef(props, 'products'))
 
   &__head {
     @include container;
-    padding-block: $space-section $space-lg;
+    padding-block: $space-md $space-lg;
   }
 
   &__skeleton {
