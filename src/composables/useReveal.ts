@@ -7,6 +7,19 @@ import { onBeforeUnmount, onMounted } from 'vue'
  */
 export function useReveal(root?: () => HTMLElement | null | undefined) {
   let observer: IntersectionObserver | null = null
+  // El contenido que llega del API suele entrar con <Transition mode="out-in">,
+  // o sea después del nextTick en que la vista llama rescan(). Vigilar el DOM
+  // evita que esos elementos se queden invisibles para siempre.
+  let mutations: MutationObserver | null = null
+  let pending = 0
+
+  function scheduleScan() {
+    if (pending) return
+    pending = requestAnimationFrame(() => {
+      pending = 0
+      scan()
+    })
+  }
 
   function scan() {
     const scope = root?.() ?? document
@@ -29,9 +42,15 @@ export function useReveal(root?: () => HTMLElement | null | undefined) {
       { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
     )
     scan()
+    mutations = new MutationObserver(scheduleScan)
+    mutations.observe(root?.() ?? document.body, { childList: true, subtree: true })
   })
 
-  onBeforeUnmount(() => observer?.disconnect())
+  onBeforeUnmount(() => {
+    observer?.disconnect()
+    mutations?.disconnect()
+    if (pending) cancelAnimationFrame(pending)
+  })
 
   // Para contenido que llega después (cuando el API responde)
   return { rescan: scan }
