@@ -119,7 +119,7 @@ const needs = computed(() =>
     font-size: 2rem;
     color: var(--c);
     background: color-mix(in srgb, var(--c) 12%, #fff);
-    transition: transform 0.6s cubic-bezier(0.34, 1.6, 0.64, 1);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   &:hover &__icon {
