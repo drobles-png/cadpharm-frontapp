@@ -91,7 +91,7 @@ const copy = professionalsCopy.benefits
     color: $brand-blue;
     font-size: 1.3rem;
     margin-bottom: 1.2rem;
-    transition: transform 0.5s cubic-bezier(0.34, 1.6, 0.64, 1);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   &:hover &__icon {
