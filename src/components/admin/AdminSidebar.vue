@@ -135,11 +135,11 @@ function isActive(to: string) {
       left: -1rem;
       top: 50%;
       width: 4px;
-      height: 0;
+      height: 60%;
       border-radius: 0 4px 4px 0;
       background: $lime;
-      transform: translateY(-50%);
-      transition: height 0.35s $ease;
+      transform: translateY(-50%) scaleY(0);
+      transition: transform 0.35s $ease;
     }
 
     &--active {
@@ -147,7 +147,7 @@ function isActive(to: string) {
       color: $surface;
 
       &::before {
-        height: 60%;
+        transform: translateY(-50%) scaleY(1);
       }
 
       .side__icon {
