@@ -6,7 +6,6 @@ import type {
   OrderItem,
   OrderStatus,
   PaymentMethod,
-  PublicConfig,
 } from '@/types'
 
 /** Vista pública de un pedido: lo justo para la página de confirmación. */
@@ -34,16 +33,6 @@ class OrderService extends APIBase {
       id,
       clientTransactionId,
     })
-    return data
-  }
-
-  /**
-   * Config pública (payphoneEnabled, whatsapp, nota de envío). Vive aquí y no
-   * en configService porque ese servicio sobreescribe get() de APIBase y se
-   * llama a sí mismo; el checkout no puede depender de eso.
-   */
-  async getConfig(): Promise<PublicConfig> {
-    const { data } = await this.get<PublicConfig>('config')
     return data
   }
 
