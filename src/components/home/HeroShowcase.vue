@@ -156,7 +156,7 @@ onBeforeUnmount(() => detach?.())
     height: auto;
     transform: rotate(var(--r));
     filter: drop-shadow(0 26px 24px rgba($ink, 0.28));
-    transition: transform 0.6s cubic-bezier(0.34, 1.5, 0.64, 1);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     user-select: none;
   }
 
