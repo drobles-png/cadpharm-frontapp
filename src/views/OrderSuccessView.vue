@@ -5,6 +5,7 @@ import OrderCelebration from '@/components/checkout/OrderCelebration.vue'
 import OrderSummaryCard from '@/components/checkout/OrderSummaryCard.vue'
 import SkeletonBlock from '@/components/ui/SkeletonBlock.vue'
 import { orderService, type PublicOrder } from '@/services/order.service'
+import { configService } from '@/services/config.service'
 import { orderMessage, waLink } from '@/composables/useCheckoutMessages'
 import { successCopy as copy } from '@/config/checkout.copy'
 
@@ -35,8 +36,8 @@ const waHref = computed(() =>
 )
 
 onMounted(async () => {
-  orderService
-    .getConfig()
+  configService
+    .load()
     .then((c) => (whatsappNumber.value = c.whatsapp))
     .catch(() => {})
   try {
