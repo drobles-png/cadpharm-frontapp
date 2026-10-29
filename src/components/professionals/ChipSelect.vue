@@ -129,7 +129,7 @@ function toggle(value: T) {
     transition:
       width 0.3s $ease,
       opacity 0.2s ease,
-      transform 0.35s cubic-bezier(0.34, 1.8, 0.64, 1);
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   &__chip--on &__check {
