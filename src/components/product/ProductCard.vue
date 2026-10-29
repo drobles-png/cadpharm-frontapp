@@ -126,7 +126,7 @@ const vars = computed(() => ({
     position: absolute;
     inset: 2.6rem 1.5rem 1rem;
     transform: translateZ(40px);
-    transition: transform 0.6s cubic-bezier(0.34, 1.4, 0.64, 1);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   &:hover &__visual {
