@@ -1,30 +1,44 @@
-// Paleta de CadPharm. Semántica primero: los componentes hablan de tinta,
-// papel y acento, no de "rosa" o "gris 700".
+// Paleta de CadPharm, tomada del logo (hoja verde + gota azul) y de los empaques.
+// Semántica primero: los componentes hablan de tinta, papel y acento.
 @use 'sass:color';
 
-// Acento de marca
-$accent: #1e9e4a;
-$accent-deep: color.adjust($accent, $lightness: -12%);
+// Marca
+$accent: #17a34a; // verde hoja
+$accent-deep: #0f7a37;
 $accent-soft: color.mix($accent, #ffffff, 14%);
+$brand-blue: #1f4fa8; // gota azul
+$brand-blue-deep: #12336f;
+$brand-blue-soft: color.mix($brand-blue, #ffffff, 12%);
+$lime: #b8f05a; // chispa vibrante para detalles
+
+// Colores por producto (vienen de cada empaque)
+$abcvit: #2f7de1;
+$abcvit-sun: #ffc531;
+$expultox: #1b8a3c;
+$expultox-orange: #f28c1b;
+$enzabiox: #f0662a;
+$enzabiox-gold: #f7b035;
+$somnycad: #1a2f7a;
+$somnycad-night: #0a1335;
 
 // Superficies
-$paper: #fdfcfa; // fondo base
-$surface: #ffffff; // superficies elevadas
-$sand: #f1ece6; // bloques suaves
-$line: #e7e1d9; // bordes
+$paper: #f7f9f7; // fondo base, frío y limpio
+$surface: #ffffff;
+$sand: #eef3ef; // bloques suaves
+$line: #e1e8e3;
 
 // Texto
-$ink: #191423; // texto principal
-$ink-soft: #4a4552; // texto secundario
-$ink-muted: #8a8590; // terciario / labels
+$ink: #0b1b2e; // azul noche casi negro
+$ink-soft: #3f4d5c;
+$ink-muted: #7d8a96;
 
-$overlay: rgba(#100c14, 0.55);
+$overlay: rgba(#06101c, 0.55);
 
 // Estados
-$success: #3bb77e;
-$warning: #d9a441;
-$info: #6a8caf;
-$danger: #c2554f;
+$success: #17a34a;
+$warning: #e0a12b;
+$info: #2f7de1;
+$danger: #d6453d;
 $success-bg: rgba($success, 0.12);
 $warning-bg: rgba($warning, 0.12);
 $info-bg: rgba($info, 0.12);
@@ -38,7 +52,8 @@ $white: $surface;
 $text-light: $surface;
 $text-secondary: $ink-soft;
 
-// Sombras — suaves, nada de "card de dashboard"
-$shadow-sm: 0 1px 2px rgba($ink, 0.04), 0 4px 12px rgba($ink, 0.04);
-$shadow-md: 0 2px 6px rgba($ink, 0.05), 0 18px 40px rgba($ink, 0.08);
-$shadow-lg: 0 30px 70px rgba($ink, 0.14);
+// Sombras
+$shadow-sm: 0 1px 2px rgba($ink, 0.04), 0 4px 12px rgba($ink, 0.05);
+$shadow-md: 0 2px 6px rgba($ink, 0.05), 0 18px 40px rgba($ink, 0.09);
+$shadow-lg: 0 30px 70px rgba($ink, 0.16);
+$shadow-glow: 0 18px 50px rgba($accent, 0.35);
