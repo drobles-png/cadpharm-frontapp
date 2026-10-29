@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/components/home/HomeFaq.vue"
+        ],
+        "createdAt": "2026-10-29T20:32:23.173Z",
+        "reason": "Claude: acordeón de altura medida; la alternativa grid-template-rows está prohibida por la regla no-grid del CLAUDE.md del proyecto"
+      },
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/components/checkout/CheckoutSummary.vue"
+        ],
+        "createdAt": "2026-10-29T20:32:23.536Z",
+        "reason": "Claude: acordeón de altura medida; la alternativa grid-template-rows está prohibida por la regla no-grid del CLAUDE.md del proyecto"
+      }
+    ]
+  }
+}
