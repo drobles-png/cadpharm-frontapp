@@ -90,7 +90,7 @@ onBeforeUnmount(() => clearTimeout(timer))
 
     i {
       transform: scale(0);
-      transition: transform 0.5s cubic-bezier(0.34, 1.8, 0.64, 1) 0.12s;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.12s;
     }
   }
 
