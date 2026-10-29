@@ -39,15 +39,15 @@ const copy = professionalsCopy.table
               >
               <small>{{ p.categoryLabel }}</small>
             </th>
-            <td>
+            <td :data-label="copy.actives">
               <ul class="pro-table__actives">
                 <li v-for="a in p.activeIngredients" :key="a.name">
                   {{ a.name }} <b>{{ a.amount }}</b>
                 </li>
               </ul>
             </td>
-            <td>{{ p.presentation }}</td>
-            <td class="pro-table__ns">{{ p.sanitaryRegistry || '—' }}</td>
+            <td :data-label="copy.presentation">{{ p.presentation }}</td>
+            <td class="pro-table__ns" :data-label="copy.registry">{{ p.sanitaryRegistry || '—' }}</td>
             <td>
               <RouterLink
                 :to="`/productos/${p.slug}`"
@@ -79,38 +79,51 @@ const copy = professionalsCopy.table
     box-shadow: $shadow-md;
   }
 
+  // Móvil: cada producto es una tarjeta apilada (una tabla de 5 columnas no
+  // cabe en 360px). Desde md vuelve a ser tabla.
   &__table {
     width: 100%;
-    min-width: 52rem;
     border-collapse: collapse;
     font-size: $text-sm;
 
-    th,
-    td {
-      padding: 1.1rem 1.2rem;
-      text-align: left;
-      vertical-align: top;
-      border-bottom: 1px solid $line;
-    }
-
-    thead th {
-      background: $ink;
-      color: $surface;
-      font-size: $text-xs;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
     }
 
     tbody tr {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      padding: 1.2rem 1.25rem;
+      border-bottom: 1px solid $line;
+      border-left: 4px solid var(--p, #{$accent});
       transition: background-color 0.25s ease;
 
-      &:hover {
-        background: color-mix(in srgb, var(--p, #{$accent}) 6%, #fff);
-      }
-
-      &:last-child > * {
+      &:last-child {
         border-bottom: none;
       }
+    }
+
+    th,
+    td {
+      display: block;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 0.2rem;
+      font-size: $text-xs;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: $ink-muted;
     }
 
     small {
@@ -118,6 +131,51 @@ const copy = professionalsCopy.table
       color: $ink-muted;
       font-weight: 500;
       margin-top: 0.2rem;
+    }
+
+    @include from('md') {
+      min-width: 52rem;
+
+      thead {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip-path: none;
+      }
+
+      tbody tr {
+        display: table-row;
+        padding: 0;
+        border-left: none;
+
+        &:hover {
+          background: color-mix(in srgb, var(--p, #{$accent}) 6%, #fff);
+        }
+
+        &:last-child > * {
+          border-bottom: none;
+        }
+      }
+
+      th,
+      td {
+        display: table-cell;
+        padding: 1.1rem 1.2rem;
+        border-bottom: 1px solid $line;
+      }
+
+      td[data-label]::before {
+        content: none;
+      }
+
+      thead th {
+        background: $ink;
+        color: $surface;
+        font-size: $text-xs;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
     }
   }
 
