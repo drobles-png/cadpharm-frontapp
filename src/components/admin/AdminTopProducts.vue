@@ -28,7 +28,7 @@ const maxUnits = computed(() => Math.max(1, ...props.items.map((p) => p.units)))
           <span
             class="top__fill"
             :style="{
-              width: grown ? `${(p.units / maxUnits) * 100}%` : '0%',
+              transform: `scaleX(${grown ? p.units / maxUnits : 0})`,
               transitionDelay: `${i * 0.1}s`,
             }"
           ></span>
@@ -99,7 +99,8 @@ const maxUnits = computed(() => Math.max(1, ...props.items.map((p) => p.units)))
     height: 100%;
     border-radius: inherit;
     background: linear-gradient(90deg, $brand-blue, $accent);
-    transition: width 1s $ease;
+    transform-origin: left center;
+    transition: transform 1s $ease;
   }
 
   &__units {
