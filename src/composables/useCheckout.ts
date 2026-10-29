@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useToastStore } from '@/stores/toast'
 import { orderService } from '@/services/order.service'
+import { configService } from '@/services/config.service'
 import { checkoutCopy } from '@/config/checkout.copy'
 import { useCheckoutForm } from './useCheckoutForm'
 import type { ApiError, Order, PaymentMethod, PayphoneBoxConfig, PublicConfig } from '@/types'
@@ -34,7 +35,7 @@ export function useCheckout() {
 
   onMounted(async () => {
     try {
-      config.value = await orderService.getConfig()
+      config.value = await configService.load()
       if (config.value.payphoneEnabled) method.value = 'payphone'
     } catch {
       // Sin config se puede comprar igual: WhatsApp no depende del API de pagos.
