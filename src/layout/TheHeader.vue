@@ -202,7 +202,7 @@ $h: 4.5rem;
     font-weight: 800;
     @include flex(row, center, center);
     border: 2px solid $surface;
-    animation: badge-pop 0.6s cubic-bezier(0.34, 1.9, 0.64, 1);
+    animation: badge-pop 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   &__burger {
