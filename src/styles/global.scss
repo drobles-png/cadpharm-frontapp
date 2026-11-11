@@ -322,3 +322,57 @@ h4 {
 .slide-right-leave-to {
   transform: translateX(100%);
 }
+
+// ─── Web informativa: tema verde profundo + crema ──────────────────────
+// Solo la web pública; el panel y el login conservan su tema claro.
+html:has(.app--public) {
+  background: $forest;
+}
+
+.app--public {
+  background: $forest;
+  color: $cream;
+
+  ::selection {
+    background: $cream;
+    color: $forest;
+  }
+
+  :focus-visible {
+    outline-color: $cream;
+  }
+}
+
+.btn {
+  &--cream {
+    background: $cream;
+    color: $forest;
+    border: 1px solid $cream;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: $surface;
+      }
+    }
+  }
+
+  &--line {
+    border: 1px solid $cream-line;
+    color: $cream;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        border-color: $cream;
+      }
+    }
+  }
+}
+
+// Eyebrow del tema oscuro: mayúsculas espaciadas en crema
+.eyebrow-cream {
+  font-size: $text-xs;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: $cream-soft;
+}
