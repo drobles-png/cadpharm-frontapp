@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { nextTick, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { site, whatsappLink } from '@/config/site'
 import { professionalsCopy } from '@/config/pages.copy'
 import { useCatalog } from '@/composables/useCatalog'
 import { useReveal } from '@/composables/useReveal'
+import { prefersReducedMotion } from '@/composables/useGsap'
 import ProHero from '@/components/professionals/ProHero.vue'
 import ProBenefits from '@/components/professionals/ProBenefits.vue'
 import ProProductsTable from '@/components/professionals/ProProductsTable.vue'
@@ -11,13 +13,24 @@ import LeadForm from '@/components/professionals/LeadForm.vue'
 import SectionHeading from '@/components/common/SectionHeading.vue'
 
 const copy = professionalsCopy.form
+const route = useRoute()
 const { products, loading, load } = useCatalog()
 const { rescan } = useReveal()
+
+// Al llegar desde la ficha (/profesionales?producto=x#contacto) el scroll del
+// router corre antes de que esta vista exista (transición out-in) y la tabla
+// cambia de alto al cargar: se reubica el ancla cuando el contenido ya está.
+function scrollToHash() {
+  if (!route.hash) return
+  const el = document.getElementById(route.hash.slice(1))
+  el?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' })
+}
 
 onMounted(async () => {
   await load()
   await nextTick()
   rescan()
+  scrollToHash()
 })
 </script>
 
@@ -29,12 +42,7 @@ onMounted(async () => {
 
     <section id="contacto" class="contact">
       <div class="contact__side">
-        <SectionHeading
-          :eyebrow="copy.eyebrow"
-          :title="copy.title"
-          :text="copy.text"
-          tone="light"
-        />
+        <SectionHeading :title="copy.title" :text="copy.text" />
         <ul class="contact__list" data-reveal>
           <li>
             <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
@@ -71,9 +79,10 @@ onMounted(async () => {
   position: relative;
   @include flex(column, stretch, flex-start, 2.5rem);
   margin: $space-xl 0.5rem 0;
-  padding: clamp(2rem, 5vw, 4.5rem) clamp(1.25rem, 4vw, 4.5rem);
-  border-radius: 36px;
-  background: $ink;
+  padding: clamp(1.75rem, 5vw, 4.5rem) clamp(1rem, 4vw, 4.5rem);
+  border-radius: $radius-lg;
+  background: $forest-deep;
+  border: 1px solid $cream-line;
   // clip y no hidden: hidden rompería el sticky de la columna lateral.
   overflow: clip;
 
@@ -85,18 +94,6 @@ onMounted(async () => {
     flex-direction: row;
     align-items: flex-start;
     gap: 4rem;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    width: 36rem;
-    height: 36rem;
-    left: -14rem;
-    bottom: -18rem;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba($accent, 0.4), transparent 65%);
-    pointer-events: none;
   }
 
   &__side {
@@ -112,35 +109,56 @@ onMounted(async () => {
 
   &__list {
     list-style: none;
-    @include flex(column, flex-start, flex-start, 0.9rem);
-    color: rgba(255, 255, 255, 0.85);
+    @include flex(column, flex-start, flex-start, 0.5rem);
+    color: $cream-soft;
 
     li {
+      min-height: 2.75rem;
       @include flex(row, center, flex-start, 0.75rem);
     }
 
-    i {
-      width: 2.4rem;
-      height: 2.4rem;
-      border-radius: 50%;
-      @include flex(row, center, center);
-      background: rgba(255, 255, 255, 0.08);
-      color: $lime;
+    a {
+      min-height: 2.75rem;
+      @include flex(row, center, flex-start);
+      color: $cream;
+      text-decoration: underline;
+      text-decoration-color: $cream-line;
+      text-underline-offset: 0.3em;
+      transition: text-decoration-color 0.2s ease-out;
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          text-decoration-color: $cream;
+        }
+      }
     }
 
-    a:hover {
-      color: $lime;
+    i {
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      @include flex(row, center, center);
+      border: 1px solid $cream-line;
+      color: $cream;
     }
   }
 
+  // Tarjeta crema: máxima legibilidad para el formulario, que es la conversión.
   &__card {
     position: relative;
-    padding: clamp(1.4rem, 3vw, 2.4rem);
-    border-radius: $radius-lg;
-    background: $paper;
+    padding: clamp(1.25rem, 3vw, 2.4rem);
+    border-radius: $radius-md;
+    background: $cream;
+    color: $forest;
 
     @include from('lg') {
       flex: 1 1 62%;
+    }
+
+    // El foco global de la web pública es crema: aquí no se vería.
+    :deep(:focus-visible) {
+      outline-color: $forest;
     }
   }
 }
