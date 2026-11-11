@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import AdminFormSection from '@/components/admin/AdminFormSection.vue'
-import { productFormCopy as copy, productsCopy } from '@/config/admin.copy'
+import { productFormCopy as copy } from '@/config/admin.copy'
 import { imageUrl } from '@/utils/format'
 import type { ProductForm } from '@/composables/useAdminProductForm'
 
@@ -13,11 +12,6 @@ const swatches = [
   { key: 'secondary', label: copy.fields.secondary },
   { key: 'ink', label: copy.fields.ink },
 ] as const
-
-const price = computed(() => {
-  const v = form.value.priceText.replace(',', '.').trim()
-  return v && !isNaN(Number(v)) ? `$${Number(v).toFixed(2)}` : productsCopy.noPrice
-})
 </script>
 
 <template>
@@ -51,8 +45,7 @@ const price = computed(() => {
             </h3>
             <p class="colors__tagline">{{ form.tagline }}</p>
             <div class="colors__foot">
-              <strong>{{ price }}</strong>
-              <span class="colors__btn"><i class="fa-solid fa-bag-shopping"></i></span>
+              <span class="colors__btn"><i class="fa-solid fa-arrow-right"></i></span>
             </div>
           </div>
         </article>
@@ -193,7 +186,7 @@ const price = computed(() => {
   }
 
   &__foot {
-    @include flex(row, center, space-between);
+    @include flex(row, center, flex-end);
     margin-top: 0.8rem;
   }
 
