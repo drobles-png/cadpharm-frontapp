@@ -62,14 +62,15 @@ function toggle(value: T) {
 </template>
 
 <style scoped lang="scss">
+// Vive sobre la tarjeta crema del formulario: chips blancos, marcados en verde.
 .chips {
   border: none;
   @include flex(column, stretch, flex-start, 0.5rem);
 
   &__legend {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: $ink-soft;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: $forest;
     margin-bottom: 0.5rem;
   }
 
@@ -80,68 +81,68 @@ function toggle(value: T) {
 
   &__chip {
     @include flex(row, center, center, 0.5rem);
+    min-height: 2.75rem;
     margin: 0;
-    padding: 0.6rem 1rem;
+    padding: 0.55rem 1rem;
     border-radius: $radius-pill;
-    border: 1.5px solid $line;
+    border: 1.5px solid rgba($forest, 0.2);
     background: $surface;
     font-size: $text-sm;
     font-weight: 600;
-    color: $ink-soft;
+    color: $forest;
     cursor: pointer;
     user-select: none;
     transition:
-      background-color 0.25s ease,
-      border-color 0.25s ease,
-      color 0.25s ease,
-      transform 0.25s $ease;
+      background-color 0.2s ease-out,
+      border-color 0.2s ease-out,
+      color 0.2s ease-out,
+      transform 0.15s ease-out;
 
-    &:hover {
-      border-color: $ink;
-      color: $ink;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        border-color: $forest;
+      }
     }
 
     &:active {
-      transform: scale(0.95);
+      transform: scale(0.97);
     }
 
     &:has(input:focus-visible) {
-      outline: 2px solid $accent;
+      outline: 2px solid $forest;
       outline-offset: 2px;
     }
 
     &--on {
-      background: $ink;
-      border-color: $ink;
-      color: $surface;
-
-      &:hover {
-        color: $surface;
-      }
+      background: $forest;
+      border-color: $forest;
+      color: $cream;
     }
   }
 
+  // Sin animar el ancho: el check aparece con opacidad y escala.
   &__check {
-    width: 0;
-    opacity: 0;
-    transform: scale(0);
-    color: $lime;
-    transition:
-      width 0.3s $ease,
-      opacity 0.2s ease,
-      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: none;
+    width: 0.9rem;
+    color: $cream;
   }
 
   &__chip--on &__check {
-    width: 0.9rem;
-    opacity: 1;
-    transform: scale(1);
+    display: inline-block;
+    animation: chip-check 0.2s ease-out both;
   }
 
   &__error {
     font-size: $text-xs;
-    font-weight: 600;
-    color: $danger;
+    font-weight: 700;
+    color: #b3261e;
+  }
+}
+
+@keyframes chip-check {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
   }
 }
 </style>
