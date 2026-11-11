@@ -27,11 +27,11 @@ defineEmits<{ close: [] }>()
       </nav>
       <div class="menu__foot" :style="{ '--i': site.nav.length }">
         <RouterLink
-          to="/productos"
-          class="btn btn--primary btn--lg btn--block"
+          to="/profesionales#contacto"
+          class="btn btn--cream btn--lg btn--block"
           @click="$emit('close')"
         >
-          <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>{{ layoutCopy.header.shop }}
+          <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>{{ layoutCopy.header.contact }}
         </RouterLink>
         <a :href="whatsappLink()" class="menu__wa" target="_blank" rel="noopener">
           <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>{{ layoutCopy.header.menuNote }}
@@ -46,7 +46,8 @@ defineEmits<{ close: [] }>()
   position: fixed;
   inset: 0;
   z-index: 95;
-  background: $paper;
+  background: $forest;
+  color: $cream;
   padding: 6.5rem 1.5rem calc(2rem + env(safe-area-inset-bottom));
   @include flex(column, stretch, space-between, 2rem);
   overflow: hidden;
@@ -61,7 +62,7 @@ defineEmits<{ close: [] }>()
     &--a {
       width: 18rem;
       height: 18rem;
-      background: $lime;
+      background: $forest-raised;
       top: -4rem;
       right: -6rem;
     }
@@ -97,12 +98,14 @@ defineEmits<{ close: [] }>()
     font-size: clamp(2.2rem, 10vw, 3.2rem);
     font-weight: 800;
     letter-spacing: -0.04em;
-    color: $ink;
+    color: $cream;
     padding-block: 0.35rem;
-    border-bottom: 1px solid $line;
+    border-bottom: 1px solid $cream-line;
 
     &.router-link-exact-active {
-      color: $accent;
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+      text-underline-offset: 0.18em;
     }
   }
 
@@ -110,7 +113,7 @@ defineEmits<{ close: [] }>()
     font-family: $font-principal;
     font-size: $text-xs;
     font-weight: 700;
-    color: $ink-muted;
+    color: $cream-muted;
     letter-spacing: 0.1em;
   }
 
@@ -123,7 +126,7 @@ defineEmits<{ close: [] }>()
     @include flex(row, center, center, 0.5rem);
     font-size: $text-sm;
     font-weight: 600;
-    color: $ink-soft;
+    color: $cream-soft;
 
     i {
       color: #25d366;
