@@ -1,77 +1,71 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { gsap } from 'gsap'
-import { homeCopy } from '@/config/home.copy'
-import { useGsap } from '@/composables/useGsap'
-import MagneticButton from '@/components/common/MagneticButton.vue'
-import HeroShowcase from './HeroShowcase.vue'
-import HeroBackdrop from './HeroBackdrop.vue'
+import { computed } from 'vue'
+import { homeHero as copy } from '@/config/info.copy'
+import { useAutoplay } from '@/composables/useAutoplay'
 
-const copy = homeCopy.hero
-const root = ref<HTMLElement | null>(null)
+const SLIDE_MS = 3000
 
-useGsap(root, () => {
-  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
-  tl.from('.hero__eyebrow', { y: 20, opacity: 0, duration: 0.8 })
-    .from('.hero__word-inner', { yPercent: 115, rotate: 4, duration: 1.1, stagger: 0.07 }, 0.1)
-    .from('.hero__underline', { scaleX: 0, duration: 1, ease: 'power3.inOut' }, 0.8)
-    .from('.hero__sub', { y: 24, opacity: 0, duration: 0.9 }, 0.55)
-    .from('.hero__actions > *', { y: 24, opacity: 0, duration: 0.9, stagger: 0.1 }, 0.7)
-    .from('.hero__hint', { opacity: 0, duration: 1 }, 1.4)
-
-  // Al salir del hero, el texto sube un poco más lento que el scroll.
-  gsap.to('.hero__copy', {
-    yPercent: -12,
-    opacity: 0.2,
-    ease: 'none',
-    scrollTrigger: { trigger: root.value, start: 'top top', end: 'bottom top', scrub: true },
-  })
-})
+const slides = copy.slides
+const count = computed(() => slides.length)
+// Sin pausa al pasar el mouse: el hero ocupa toda la pantalla y el cursor
+// casi siempre está encima, así que nunca cambiaba.
+const { index } = useAutoplay(
+  count,
+  SLIDE_MS,
+)
+const current = computed(() => slides[index.value]!)
+const actions = computed(() =>
+  current.value.proFirst
+    ? { first: copy.secondary, second: copy.primary, firstIcon: true }
+    : { first: copy.primary, second: copy.secondary, firstIcon: false },
+)
 </script>
 
 <template>
-  <section ref="root" class="hero">
-    <HeroBackdrop />
-
-    <div class="hero__inner">
-      <div class="hero__copy">
-        <p class="hero__eyebrow">
-          <span class="hero__pulse" aria-hidden="true"></span>{{ copy.eyebrow }}
-        </p>
-        <h1 class="hero__title">
-          <template v-for="(word, i) in copy.title" :key="i">
-            <span class="hero__word" :class="{ 'hero__word--accent': word.accent }">
-              <span class="hero__word-inner">{{ word.text }}</span>
-              <span
-                v-if="i === copy.title.length - 1"
-                class="hero__underline"
-                aria-hidden="true"
-              ></span> </span
-            >{{ ' ' }}
-          </template>
-        </h1>
-        <p class="hero__sub">{{ copy.subtitle }}</p>
-        <div class="hero__actions">
-          <MagneticButton>
-            <RouterLink :to="copy.primaryCta.to" class="btn btn--primary btn--lg">
-              <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>{{ copy.primaryCta.label }}
-            </RouterLink>
-          </MagneticButton>
-          <MagneticButton :strength="0.2">
-            <RouterLink :to="copy.secondaryCta.to" class="btn btn--light btn--lg hero__pro">
-              <i class="fa-solid fa-user-doctor" aria-hidden="true"></i
-              >{{ copy.secondaryCta.label }}
-            </RouterLink>
-          </MagneticButton>
-        </div>
-      </div>
-
-      <HeroShowcase class="hero__showcase" />
+  <section
+    class="hero"
+    :aria-label="copy.label"
+    aria-roledescription="carrusel"
+  >
+    <div class="hero__media" aria-hidden="true">
+      <img
+        v-for="(slide, i) in slides"
+        :key="slide.image"
+        :src="slide.image"
+        alt=""
+        class="hero__photo"
+        :class="{ 'hero__photo--active': i === index }"
+        :style="{ '--focus': slide.focus ?? '60% 40%', '--dur': `${SLIDE_MS + 1500}ms` }"
+        :fetchpriority="i === 0 ? 'high' : 'low'"
+        decoding="async"
+      />
+      <span class="hero__shade"></span>
     </div>
 
-    <p class="hero__hint" aria-hidden="true">
-      <span class="hero__mouse"><span></span></span>{{ copy.scrollHint }}
-    </p>
+    <div class="hero__inner">
+      <h1 class="visually-hidden">{{ copy.heading }}</h1>
+      <!-- Sin aria-live: el cambio automático no debe interrumpir al lector de pantalla. -->
+      <Transition name="hero-copy" mode="out-in">
+        <div :key="index" class="hero__copy">
+          <span class="hero__eyebrow">{{ current.eyebrow }}</span>
+          <p class="hero__title">{{ current.title }}</p>
+          <p class="hero__text">{{ current.text }}</p>
+          <span class="visually-hidden">{{ current.alt }}</span>
+        </div>
+      </Transition>
+
+      <div class="hero__actions">
+        <RouterLink :to="actions.first.to" class="btn btn--cream btn--lg">
+          <i v-if="actions.firstIcon" class="fa-solid fa-user-doctor" aria-hidden="true"></i
+          >{{ actions.first.label }}
+        </RouterLink>
+        <RouterLink :to="actions.second.to" class="btn btn--line btn--lg hero__secondary">
+          <i v-if="!actions.firstIcon" class="fa-solid fa-user-doctor" aria-hidden="true"></i
+          >{{ actions.second.label }}
+        </RouterLink>
+      </div>
+
+    </div>
   </section>
 </template>
 
@@ -80,172 +74,151 @@ useGsap(root, () => {
   position: relative;
   min-height: 100svh;
   overflow: hidden;
-  padding: 6.5rem 0 4.5rem;
-  background: $paper;
-  @include flex(column, stretch, center);
+  background: $forest-deep;
+  isolation: isolate;
+  @include flex(column, stretch, flex-end);
 
-  @include from('lg') {
-    padding: 7rem 0 5rem;
+  &__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  &__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--focus);
+    opacity: 0;
+    transform: scale(1.06);
+    // Al salir solo se apaga; el zoom lento corre mientras está activa.
+    transition:
+      opacity 0.8s ease,
+      transform 0s linear 0.8s;
+
+    @include from('md') {
+      object-position: center;
+    }
+
+    &--active {
+      opacity: 1;
+      transform: scale(1);
+      transition:
+        opacity 0.8s ease,
+        transform var(--dur) linear;
+    }
+
+    @include reduced-motion {
+      transform: none;
+    }
+  }
+
+  // Degradado desde abajo en móvil y desde la izquierda en desktop: el texto
+  // siempre queda sobre la zona oscura, sin importar la foto.
+  &__shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba($forest-deep, 0.75) 0%, rgba($forest-deep, 0) 22%),
+      linear-gradient(
+        0deg,
+        rgba($forest-deep, 0.95) 0%,
+        rgba($forest-deep, 0.7) 40%,
+        rgba($forest-deep, 0.1) 75%,
+        rgba($forest-deep, 0.2) 100%
+      );
+
+    @include from('md') {
+      background:
+        linear-gradient(
+          90deg,
+          rgba($forest-deep, 0.88) 0%,
+          rgba($forest-deep, 0.55) 38%,
+          rgba($forest-deep, 0) 68%
+        ),
+        linear-gradient(0deg, rgba($forest-deep, 0.6) 0%, transparent 30%),
+        linear-gradient(180deg, rgba($forest-deep, 0.5) 0%, transparent 22%);
+    }
   }
 
   &__inner {
-    position: relative;
     @include container(1280px);
-    @include flex(column, stretch, center, 2.5rem);
+    padding-top: 7rem;
+    padding-bottom: 2rem;
+    @include flex(column, flex-start, flex-end, 1.75rem);
 
-    @include from('lg') {
-      flex-direction: row;
-      align-items: center;
-      gap: 2rem;
+    @include from('md') {
+      min-height: 100svh;
+      justify-content: center;
+      padding-bottom: 6rem;
     }
   }
 
   &__copy {
-    @include flex(column, flex-start, flex-start, 1.4rem);
-
-    @include from('lg') {
-      flex: 1 1 52%;
-    }
+    max-width: 46rem;
+    @include flex(column, flex-start, flex-start, 1rem);
   }
 
   &__eyebrow {
-    @include flex(row, center, flex-start, 0.6rem);
     font-size: $text-xs;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: $accent-deep;
-    padding: 0.45rem 0.9rem;
-    border-radius: $radius-pill;
-    background: rgba(255, 255, 255, 0.75);
-    border: 1px solid rgba($accent, 0.25);
-    backdrop-filter: blur(8px);
-  }
-
-  &__pulse {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: $accent;
-    animation: pulse 2s ease-out infinite;
+    color: $cream-soft;
   }
 
   &__title {
-    font-family: $font-display;
-    font-size: clamp(2.7rem, 1.4rem + 6vw, 6rem);
-    font-weight: 800;
-    line-height: 0.98;
-    letter-spacing: -0.05em;
-    color: $ink;
-    text-wrap: balance;
-    // Contexto propio para que el subrayado (z-index -1) quede tras la palabra y no tras el hero.
-    position: relative;
-    isolation: isolate;
+    @include display(clamp(2.4rem, 1.6rem + 3.6vw, 4.4rem), 700);
+    color: $cream;
   }
 
-  &__word {
-    position: relative;
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: top;
-    padding-bottom: 0.1em;
-    margin-bottom: -0.1em;
-
-    &--accent {
-      color: $accent;
-    }
-
-    &:has(.hero__underline) {
-      color: $brand-blue;
-    }
-  }
-
-  &__word-inner {
-    display: inline-block;
-  }
-
-  &__underline {
-    position: absolute;
-    left: 0;
-    right: 0.25em;
-    bottom: 0.08em;
-    height: 0.14em;
-    border-radius: 99px;
-    background: $lime;
-    z-index: -1;
-    transform-origin: left;
-  }
-
-  &__sub {
+  &__text {
     font-size: $text-lg;
-    color: $ink-soft;
-    max-width: 34rem;
-    line-height: 1.6;
+    line-height: 1.55;
+    color: $cream-soft;
+    max-width: 32rem;
   }
 
   &__actions {
-    @include flex(row, center, flex-start, 0.8rem);
+    @include flex(row, center, flex-start, 0.75rem);
     flex-wrap: wrap;
-    margin-top: 0.4rem;
-  }
+    width: 100%;
 
-  &__pro {
-    box-shadow: $shadow-sm;
-  }
+    .btn {
+      flex: 1 1 auto;
 
-  &__showcase {
-    @include from('lg') {
-      flex: 1 1 48%;
+      @include from('sm') {
+        flex: 0 0 auto;
+      }
     }
   }
 
-  &__hint {
-    position: absolute;
-    bottom: 1.4rem;
-    left: 50%;
-    transform: translateX(-50%);
-    @include flex(row, center, center, 0.6rem);
-    font-size: $text-xs;
-    font-weight: 600;
-    color: $ink-muted;
-    white-space: nowrap;
+  &__secondary {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba($forest-deep, 0.25);
   }
 
-  &__mouse {
-    width: 1.2rem;
-    height: 1.9rem;
-    border: 2px solid currentColor;
-    border-radius: 99px;
-    @include flex(row, flex-start, center);
-    padding-top: 0.3rem;
-
-    span {
-      width: 3px;
-      height: 6px;
-      border-radius: 3px;
-      background: currentColor;
-      animation: wheel 1.6s ease-in-out infinite;
-    }
-  }
 }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba($accent, 0.55);
-  }
-  100% {
-    box-shadow: 0 0 0 10px rgba($accent, 0);
-  }
+.hero-copy-enter-active {
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
-@keyframes wheel {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  60% {
-    transform: translateY(7px);
-    opacity: 0;
-  }
+.hero-copy-leave-active {
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+.hero-copy-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.hero-copy-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 </style>
