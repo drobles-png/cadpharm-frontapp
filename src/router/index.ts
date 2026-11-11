@@ -35,25 +35,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/AboutView.vue'),
     meta: { title: 'Nosotros' },
   },
-  {
-    path: '/checkout',
-    name: 'Checkout',
-    component: () => import('@/views/CheckoutView.vue'),
-    meta: { title: 'Finalizar compra' },
-  },
-  {
-    path: '/pedido/:orderNumber',
-    name: 'OrderSuccess',
-    component: () => import('@/views/OrderSuccessView.vue'),
-    meta: { title: 'Pedido recibido' },
-  },
-  {
-    // URL de respuesta registrada en Payphone Developer: no cambiarla sin avisar.
-    path: '/pago/respuesta',
-    name: 'PaymentResponse',
-    component: () => import('@/views/PaymentResponseView.vue'),
-    meta: { title: 'Confirmando pago' },
-  },
+  // La web ya no vende: los enlaces viejos de compra llevan al catálogo.
+  { path: '/checkout', redirect: '/productos' },
+  { path: '/pedido/:orderNumber', redirect: '/productos' },
+  { path: '/pago/respuesta', redirect: '/productos' },
   {
     path: '/login',
     name: 'Login',
@@ -70,18 +55,6 @@ const routes: Array<RouteRecordRaw> = [
         name: 'AdminDashboard',
         component: () => import('@/views/admin/AdminDashboardView.vue'),
         meta: { ...adminMeta, title: 'Panel' },
-      },
-      {
-        path: 'pedidos',
-        name: 'AdminOrders',
-        component: () => import('@/views/admin/AdminOrdersView.vue'),
-        meta: { ...adminMeta, title: 'Pedidos' },
-      },
-      {
-        path: 'pedidos/:id',
-        name: 'AdminOrderDetail',
-        component: () => import('@/views/admin/AdminOrderDetailView.vue'),
-        meta: { ...adminMeta, title: 'Pedido' },
       },
       {
         path: 'productos',
