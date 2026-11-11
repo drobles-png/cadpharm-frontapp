@@ -1,8 +1,8 @@
 /**
  * Copy del panel de administración. Quien lo opera no es técnico: cada texto
- * explica qué pasa en palabras de tienda, no de sistema.
+ * explica qué pasa en palabras del día a día, no de sistema.
  */
-import type { LeadStatus, LeadType, OrderStatus, ProductCategory } from '@/types'
+import type { LeadStatus, LeadType, ProductCategory } from '@/types'
 
 /** Tonos de las pills: cada uno mapea a un color de estado en AdminPill. */
 export type PillTone = 'warning' | 'info' | 'blue' | 'success' | 'muted' | 'danger'
@@ -15,10 +15,10 @@ export const adminBrand = {
 
 export const loginCopy = {
   brandTitle: 'Todo tu laboratorio, en un solo lugar.',
-  brandText: 'Pedidos, productos y mensajes de médicos y farmacias, al día y sin complicaciones.',
+  brandText: 'Productos y mensajes de médicos y farmacias, al día y sin complicaciones.',
   brandPoints: [
-    { icon: 'fa-solid fa-bag-shopping', label: 'Pedidos al instante' },
     { icon: 'fa-solid fa-capsules', label: 'Catálogo siempre actualizado' },
+    { icon: 'fa-solid fa-envelope-open-text', label: 'Mensajes al instante' },
     { icon: 'fa-solid fa-user-doctor', label: 'Contactos de profesionales' },
   ],
   eyebrow: 'Acceso al panel',
@@ -32,7 +32,7 @@ export const loginCopy = {
   remember: 'Recordar mi correo',
   submit: 'Ingresar',
   submitting: 'Ingresando',
-  backToStore: 'Volver a la tienda',
+  backToStore: 'Volver al sitio web',
   notAdmin: 'Esta cuenta no tiene acceso al panel.',
   welcome: (name: string) => `Hola, ${name}`,
 }
@@ -40,11 +40,10 @@ export const loginCopy = {
 export const navCopy = {
   items: [
     { to: '/admin', label: 'Panel', icon: 'fa-solid fa-chart-simple', badge: '' },
-    { to: '/admin/pedidos', label: 'Pedidos', icon: 'fa-solid fa-bag-shopping', badge: 'orders' },
     { to: '/admin/productos', label: 'Productos', icon: 'fa-solid fa-capsules', badge: '' },
     { to: '/admin/mensajes', label: 'Mensajes', icon: 'fa-solid fa-envelope', badge: 'leads' },
   ],
-  store: 'Ver tienda',
+  store: 'Ver sitio web',
   adminFallback: 'Administrador',
   logout: 'Cerrar sesión',
   menu: 'Abrir menú',
@@ -57,114 +56,46 @@ export const navCopy = {
 }
 
 export const dashboardCopy = {
-  title: 'Resumen del mes',
-  subtitle: 'Cómo va la tienda este mes, de un vistazo.',
+  title: 'Resumen',
+  subtitle: 'Cómo están tu catálogo y los mensajes de profesionales, de un vistazo.',
   kpis: {
-    revenue: 'Ingresos del mes',
-    orders: 'Pedidos del mes',
-    ticket: 'Ticket promedio',
-    pending: 'Pedidos por atender',
-    leads: 'Mensajes nuevos',
+    published: 'Productos publicados',
+    publishedOf: (total: number) => (total === 1 ? 'de 1 producto' : `de ${total} productos`),
+    featured: 'Destacados en el inicio',
+    newLeads: 'Mensajes por responder',
+    totalLeads: 'Mensajes recibidos',
   },
-  vsPrev: 'vs. mes anterior',
-  noPrev: 'Primer mes con ventas',
-  chartTitle: 'Ventas de los últimos 30 días',
-  chartOrders: (n: number) => (n === 1 ? '1 pedido' : `${n} pedidos`),
-  topTitle: 'Productos más vendidos',
-  topUnits: (n: number) => (n === 1 ? '1 unidad' : `${n} unidades`),
-  recentTitle: 'Pedidos recientes',
+  actionsTitle: 'Accesos rápidos',
+  actions: [
+    { to: '/admin/productos/nuevo', label: 'Nuevo producto', text: 'Agrega un producto al catálogo.', icon: 'fa-solid fa-plus' },
+    { to: '/admin/productos', label: 'Productos', text: 'Edita fichas, fotos y visibilidad.', icon: 'fa-solid fa-capsules' },
+    { to: '/admin/mensajes', label: 'Mensajes', text: 'Responde a médicos y farmacias.', icon: 'fa-solid fa-envelope' },
+  ],
+  recentTitle: 'Últimos mensajes',
   seeAll: 'Ver todos',
-  emptyTitle: 'Todavía no hay ventas',
-  emptyText: 'Cuando entre el primer pedido, aquí verás cómo crece la tienda día a día.',
-  emptyCta: 'Revisar productos',
-  emptyTop: 'Aún no hay productos vendidos este mes.',
-  emptyRecent: 'Aún no hay pedidos.',
+  emptyRecent: 'Aún no llegan mensajes desde la web.',
 }
 
-export const orderStatus: Record<OrderStatus, { label: string; tone: PillTone; icon: string }> = {
-  pending: { label: 'Pendiente', tone: 'warning', icon: 'fa-solid fa-hourglass-half' },
-  paid: { label: 'Pagado', tone: 'info', icon: 'fa-solid fa-credit-card' },
-  confirmed: { label: 'Confirmado', tone: 'blue', icon: 'fa-solid fa-clipboard-check' },
-  shipped: { label: 'Enviado', tone: 'info', icon: 'fa-solid fa-truck-fast' },
-  delivered: { label: 'Entregado', tone: 'success', icon: 'fa-solid fa-house-circle-check' },
-  cancelled: { label: 'Cancelado', tone: 'muted', icon: 'fa-solid fa-ban' },
-  failed: { label: 'Pago fallido', tone: 'danger', icon: 'fa-solid fa-circle-xmark' },
-}
-
-/** Siguiente paso natural de cada estado; los que no aparecen ya terminaron. */
-export const orderNextStep: Partial<Record<OrderStatus, { to: OrderStatus; label: string; hint: string }>> = {
-  pending: { to: 'confirmed', label: 'Confirmar pedido', hint: 'Ya hablaste con el cliente y el pedido sigue en pie.' },
-  paid: { to: 'confirmed', label: 'Confirmar pedido', hint: 'El pago entró: confirma para prepararlo.' },
-  confirmed: { to: 'shipped', label: 'Marcar como enviado', hint: 'El paquete ya salió hacia el cliente.' },
-  shipped: { to: 'delivered', label: 'Marcar como entregado', hint: 'El cliente ya recibió su pedido.' },
-}
-
-export const ordersCopy = {
-  title: 'Pedidos',
-  subtitle: 'Todo lo que han comprado tus clientes, del más nuevo al más antiguo.',
-  search: 'Buscar por número, nombre, correo o teléfono',
-  clear: 'Borrar búsqueda',
-  all: 'Todos',
-  cols: { number: 'Pedido', customer: 'Cliente', date: 'Fecha', payment: 'Pago', total: 'Total', status: 'Estado' },
-  payment: { payphone: 'Tarjeta (Payphone)', whatsapp: 'WhatsApp' } as Record<string, string>,
-  items: (n: number) => (n === 1 ? '1 producto' : `${n} productos`),
-  emptyTitle: 'No hay pedidos aquí',
-  emptyText: 'Prueba con otro filtro o borra la búsqueda.',
+/** Paginación compartida por las listas del panel. */
+export const paginationCopy = {
   prev: 'Anterior',
   next: 'Siguiente',
   pageOf: (page: number, pages: number) => `Página ${page} de ${pages}`,
 }
 
-export const orderDetailCopy = {
-  back: 'Volver a pedidos',
-  customer: 'Cliente',
-  document: 'Cédula / RUC',
-  city: 'Ciudad',
-  address: 'Dirección',
-  notes: 'Notas del cliente',
-  whatsapp: 'Escribir por WhatsApp',
-  call: 'Llamar',
-  email: 'Enviar correo',
-  waMessage: (name: string, number: string) =>
-    `Hola ${name.split(' ')[0]}, te escribimos de CadPharm por tu pedido ${number}. `,
-  items: 'Productos',
-  subtotal: 'Subtotal',
-  shipping: 'Envío',
-  shippingFree: 'Gratis',
-  total: 'Total',
-  paymentMethod: 'Método de pago',
-  transaction: 'Transacción',
-  payphone: 'Respuesta de Payphone',
-  payphoneHint: 'Datos técnicos del pago, por si soporte los pide.',
-  timeline: 'Historial',
-  nextTitle: 'Siguiente paso',
-  done: 'Este pedido ya terminó su recorrido.',
-  cancel: 'Cancelar pedido',
-  cancelTitle: '¿Cancelar este pedido?',
-  cancelMessage: 'El cliente dejará de verlo como activo. Esta acción no se puede deshacer.',
-  cancelConfirm: 'Sí, cancelar',
-  cancelKeep: 'No, mantenerlo',
-  note: 'Nota (opcional)',
-  notePlaceholder: 'Ej.: el cliente pidió cambiar la dirección',
-  updated: (label: string) => `Pedido actualizado: ${label}`,
-  notFound: 'No encontramos este pedido.',
-}
-
 export const productsCopy = {
   title: 'Productos',
-  subtitle: 'Lo que ves aquí es lo que se muestra en la tienda.',
+  subtitle: 'Lo que ves aquí es lo que se muestra en la web.',
   add: 'Nuevo producto',
   published: 'Publicado',
   hidden: 'Oculto',
   featured: 'Destacado',
-  stock: 'Stock',
   order: 'Orden',
-  noPrice: 'Por confirmar',
   edit: 'Editar',
-  nowPublished: (name: string) => `${name} ya se ve en la tienda`,
+  nowPublished: (name: string) => `${name} ya se ve en la web`,
   nowHidden: (name: string) => `${name} quedó oculto`,
   emptyTitle: 'Aún no hay productos',
-  emptyText: 'Crea el primero para empezar a vender.',
+  emptyText: 'Crea el primero para mostrarlo en la web.',
 }
 
 export const categories: { value: ProductCategory; label: string }[] = [
@@ -193,15 +124,12 @@ export const productFormCopy = {
     description: 'Descripción',
     category: 'Categoría',
     categoryLabel: 'Etiqueta de categoría',
-    categoryLabelHint: 'Cómo se lee la categoría en la tienda.',
+    categoryLabelHint: 'Cómo se lee la categoría en la web.',
     presentation: 'Presentación',
     presentationHint: 'Ej.: Frasco de 120 ml',
-    price: 'Precio (USD)',
-    priceHint: 'Déjalo vacío si el precio aún está por confirmar.',
-    stock: 'Stock',
-    order: 'Orden en la tienda',
+    order: 'Orden en la web',
     orderHint: 'Los números más bajos salen primero.',
-    isPublished: 'Visible en la tienda',
+    isPublished: 'Visible en la web',
     featured: 'Destacado en el inicio',
     primary: 'Color principal',
     secondary: 'Color secundario',
@@ -251,7 +179,7 @@ export const productFormCopy = {
   created: 'Producto creado',
   delete: 'Eliminar producto',
   deleteTitle: '¿Eliminar este producto?',
-  deleteMessage: 'Desaparecerá de la tienda y del panel. Si solo quieres esconderlo, desactiva "Visible en la tienda".',
+  deleteMessage: 'Desaparecerá de la web y del panel. Si solo quieres esconderlo, desactiva "Visible en la web".',
   deleteConfirm: 'Sí, eliminar',
   deleted: 'Producto eliminado',
   leaveTitle: '¿Salir sin guardar?',
