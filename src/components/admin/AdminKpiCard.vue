@@ -15,6 +15,8 @@ const props = defineProps<{
   delta?: number | null
   deltaLabel?: string
   noDeltaLabel?: string
+  /** Texto chico bajo el valor, para dar contexto ("de 8 productos"). */
+  hint?: string
   tone?: 'green' | 'blue' | 'warning' | 'lime'
   to?: string
 }>()
@@ -41,6 +43,7 @@ const deltaText = computed(() => {
       <span class="kpi__icon"><i :class="icon"></i></span>
       <p class="kpi__label">{{ label }}</p>
       <p class="kpi__value">{{ display }}</p>
+      <p v-if="hint" class="kpi__delta">{{ hint }}</p>
       <p v-if="delta !== undefined" class="kpi__delta">
         <span
           v-if="deltaText"
