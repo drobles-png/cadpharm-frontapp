@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { site } from '@/config/site'
-import { productsCopy } from '@/config/pages.copy'
+import { catalogCopy } from '@/config/info.copy'
 
 /** Filtro por categoría. '' = todas. */
 defineProps<{ modelValue: string; counts: Record<string, number> }>()
 defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const options = [
-  { key: '', label: productsCopy.all, icon: 'fa-solid fa-border-all' },
+  { key: '', label: catalogCopy.all, icon: 'fa-solid fa-border-all' },
   ...site.categories.map((c) => ({ key: c.key, label: c.label, icon: c.icon })),
 ]
 </script>
@@ -51,43 +51,46 @@ const options = [
 
   &__chip {
     flex-shrink: 0;
+    min-height: 2.75rem;
     @include flex(row, center, center, 0.5rem);
-    padding: 0.65rem 1rem;
+    padding: 0.6rem 1rem;
     border-radius: $radius-pill;
-    background: $surface;
-    border: 1px solid $line;
+    border: 1px solid $cream-line;
     font-size: $text-sm;
     font-weight: 600;
-    color: $ink-soft;
+    color: $cream-soft;
     white-space: nowrap;
     transition:
-      background-color 0.3s ease,
-      color 0.3s ease,
-      border-color 0.3s ease,
-      transform 0.3s $ease;
-    @include focus-ring;
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.16s ease-out;
 
-    &:hover {
-      border-color: $ink;
-      color: $ink;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        border-color: $cream;
+        color: $cream;
+      }
     }
 
     &:active {
-      transform: scale(0.95);
+      transform: scale(0.97);
     }
 
     &--active {
-      background: $ink;
-      border-color: $ink;
-      color: $surface;
+      background: $cream;
+      border-color: $cream;
+      color: $forest;
 
-      &:hover {
-        color: $surface;
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          color: $forest;
+        }
       }
 
       .chips__count {
-        background: $lime;
-        color: $ink;
+        background: $forest;
+        color: $cream;
       }
     }
   }
@@ -96,11 +99,10 @@ const options = [
     min-width: 1.4rem;
     padding: 0.05rem 0.4rem;
     border-radius: $radius-pill;
-    background: $sand;
+    background: $cream-line;
     font-size: $text-xs;
     font-weight: 700;
     text-align: center;
-    transition: background-color 0.3s ease;
   }
 }
 </style>
