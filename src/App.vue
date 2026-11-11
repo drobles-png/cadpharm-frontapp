@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import TheHeader from '@/layout/TheHeader.vue'
 import TheFooter from '@/layout/TheFooter.vue'
 import ToastList from '@/components/ui/ToastList.vue'
-import CartDrawer from '@/components/cart/CartDrawer.vue'
 
 const route = useRoute()
 // El panel trae su propio layout; el login va a pantalla completa.
@@ -23,7 +22,6 @@ const layout = computed(() => route.meta.layout ?? 'public')
       </RouterView>
     </main>
     <TheFooter v-if="layout === 'public'" />
-    <CartDrawer v-if="layout === 'public'" />
     <ToastList />
   </div>
 </template>
