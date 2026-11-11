@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import type { Product } from '@/types'
 import { leadTypes, professionalsCopy } from '@/config/pages.copy'
 import { useLeadForm } from '@/composables/useLeadForm'
@@ -9,15 +10,28 @@ import LeadSuccess from './LeadSuccess.vue'
 
 const props = defineProps<{ products: Product[] }>()
 const copy = professionalsCopy.form
-const { form, website, sending, sent, successMessage, errorFor, touch, submit, reset } =
+const { form, website, sending, sent, successMessage, errorFor, touch, submit, reset, preselect } =
   useLeadForm()
 
 // Se guardan nombres legibles: es lo que el equipo verá en el panel.
+const labelOf = (p: Product) => `${p.name} ${p.nameAccent}`.trim()
 const productOptions = computed(() =>
-  props.products.map((p) => {
-    const label = `${p.name} ${p.nameAccent}`.trim()
-    return { value: label, label }
-  }),
+  props.products.map((p) => ({ value: labelOf(p), label: labelOf(p) })),
+)
+
+// La ficha enlaza a /profesionales?producto=<slug>#contacto: ese producto
+// llega ya marcado. Se espera al catálogo porque el valor es el nombre.
+const route = useRoute()
+const requestedSlug = computed(() =>
+  typeof route.query.producto === 'string' ? route.query.producto : '',
+)
+watch(
+  [requestedSlug, () => props.products],
+  ([slug]) => {
+    const product = props.products.find((p) => p.slug === slug)
+    if (product) preselect(labelOf(product))
+  },
+  { immediate: true },
 )
 const showSpecialty = computed(() => form.type === 'medico')
 </script>
@@ -121,7 +135,7 @@ const showSpecialty = computed(() => form.type === 'medico')
 
         <button
           type="submit"
-          class="btn btn--primary btn--lg btn--block lead__submit"
+          class="btn btn--lg btn--block lead__submit"
           :class="{ 'lead__submit--busy': sending }"
           :disabled="sending"
         >
@@ -163,10 +177,23 @@ const showSpecialty = computed(() => form.type === 'medico')
     overflow: hidden;
   }
 
+  // Botón verde sobre la tarjeta crema (contraste alto, mismo par de la marca).
   &__submit {
     position: relative;
     overflow: hidden;
     margin-top: 0.4rem;
+    min-height: 3.25rem;
+    background: $forest;
+    color: $cream;
+    transition:
+      background-color 0.2s ease-out,
+      transform 0.15s ease-out;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: $forest-raised;
+      }
+    }
 
     &:disabled {
       opacity: 1;
@@ -180,18 +207,13 @@ const showSpecialty = computed(() => form.type === 'medico')
     bottom: 0;
     height: 100%;
     width: 100%;
-    background: linear-gradient(
-      100deg,
-      transparent 20%,
-      rgba(255, 255, 255, 0.35) 50%,
-      transparent 80%
-    );
+    background: linear-gradient(100deg, transparent 20%, rgba($cream, 0.25) 50%, transparent 80%);
     transform: translateX(-100%);
     pointer-events: none;
   }
 
   &__submit--busy {
-    background: $accent-deep;
+    background: $forest-raised;
   }
 
   &__submit--busy &__progress {
@@ -202,13 +224,13 @@ const showSpecialty = computed(() => form.type === 'medico')
 .swap-enter-active,
 .swap-leave-active {
   transition:
-    opacity 0.35s ease,
-    transform 0.45s $ease;
+    opacity 0.2s ease-out,
+    transform 0.25s ease-out;
 }
 
 .swap-enter-from {
   opacity: 0;
-  transform: scale(0.96) translateY(12px);
+  transform: translateY(8px);
 }
 
 .swap-leave-to {
