@@ -5,7 +5,11 @@ import { productFormCopy } from '@/config/admin.copy'
 import { useToastStore } from '@/stores/toast'
 import type { ApiError, Product, ProductInput } from '@/types'
 
-/** El formulario guarda el precio como texto en dólares; el API lo quiere en centavos. */
+/**
+ * El formulario guarda el precio como texto en dólares; el API lo quiere en centavos.
+ * La web ya no vende: precio y stock no se muestran en el formulario, pero se siguen
+ * enviando con el valor que ya tenía el producto para no romper el API.
+ */
 export type ProductForm = Omit<ProductInput, 'price'> & { priceText: string }
 
 export function emptyProduct(): ProductForm {
