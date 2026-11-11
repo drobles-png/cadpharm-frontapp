@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import type { Product } from '@/types'
 import { professionalsCopy } from '@/config/pages.copy'
+import { productPhotos } from '@/config/info.copy'
 import SectionHeading from '@/components/common/SectionHeading.vue'
 import SkeletonBlock from '@/components/ui/SkeletonBlock.vue'
 
 defineProps<{ products: Product[]; loading: boolean }>()
 const copy = professionalsCopy.table
+
+function photoOf(p: Product) {
+  return productPhotos[p.slug] ?? p.images[0] ?? '/img/placeholder.svg'
+}
 </script>
 
 <template>
   <section id="fichas" class="pro-table">
-    <SectionHeading :eyebrow="copy.eyebrow" :title="copy.title" />
+    <SectionHeading :title="copy.title" />
     <div class="pro-table__scroll" data-reveal>
       <table class="pro-table__table">
         <thead>
@@ -32,12 +37,24 @@ const copy = professionalsCopy.table
           </tr>
         </tbody>
         <tbody v-else>
-          <tr v-for="p in products" :key="p._id" :style="{ '--p': p.theme.primary }">
+          <tr v-for="p in products" :key="p._id">
             <th scope="row">
-              <span class="pro-table__name"
-                ><span class="pro-table__dot"></span>{{ p.name }} {{ p.nameAccent }}</span
-              >
-              <small>{{ p.categoryLabel }}</small>
+              <span class="pro-table__product">
+                <span class="pro-table__photo">
+                  <img
+                    :src="photoOf(p)"
+                    :alt="`${copy.photoAlt} ${p.name} ${p.nameAccent}`"
+                    loading="lazy"
+                    decoding="async"
+                    width="96"
+                    height="96"
+                  />
+                </span>
+                <span>
+                  <span class="pro-table__name">{{ p.name }} {{ p.nameAccent }}</span>
+                  <small>{{ p.categoryLabel }}</small>
+                </span>
+              </span>
             </th>
             <td :data-label="copy.actives">
               <ul class="pro-table__actives">
@@ -47,7 +64,9 @@ const copy = professionalsCopy.table
               </ul>
             </td>
             <td :data-label="copy.presentation">{{ p.presentation }}</td>
-            <td class="pro-table__ns" :data-label="copy.registry">{{ p.sanitaryRegistry || '—' }}</td>
+            <td class="pro-table__ns" :data-label="copy.registry">
+              {{ p.sanitaryRegistry || '—' }}
+            </td>
             <td>
               <RouterLink
                 :to="`/productos/${p.slug}`"
@@ -74,9 +93,9 @@ const copy = professionalsCopy.table
     // relative: contiene al th .visually-hidden (absoluto) dentro del scroll.
     position: relative;
     overflow-x: auto;
-    border-radius: $radius-lg;
-    background: $surface;
-    box-shadow: $shadow-md;
+    border-radius: $radius-md;
+    border: 1px solid $cream-line;
+    background: $forest-raised;
   }
 
   // Móvil: cada producto es una tarjeta apilada (una tabla de 5 columnas no
@@ -85,6 +104,7 @@ const copy = professionalsCopy.table
     width: 100%;
     border-collapse: collapse;
     font-size: $text-sm;
+    color: $cream;
 
     thead {
       position: absolute;
@@ -97,11 +117,9 @@ const copy = professionalsCopy.table
     tbody tr {
       display: flex;
       flex-direction: column;
-      gap: 0.55rem;
-      padding: 1.2rem 1.25rem;
-      border-bottom: 1px solid $line;
-      border-left: 4px solid var(--p, #{$accent});
-      transition: background-color 0.25s ease;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      border-bottom: 1px solid $cream-line;
 
       &:last-child {
         border-bottom: none;
@@ -121,16 +139,17 @@ const copy = professionalsCopy.table
       margin-bottom: 0.2rem;
       font-size: $text-xs;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: $ink-muted;
+      color: $cream-muted;
     }
 
     small {
       display: block;
-      color: $ink-muted;
+      font-size: 0.8rem;
+      color: $cream-muted;
       font-weight: 500;
-      margin-top: 0.2rem;
+      margin-top: 0.15rem;
     }
 
     @include from('md') {
@@ -147,14 +166,16 @@ const copy = professionalsCopy.table
       tbody tr {
         display: table-row;
         padding: 0;
-        border-left: none;
-
-        &:hover {
-          background: color-mix(in srgb, var(--p, #{$accent}) 6%, #fff);
-        }
+        transition: background-color 0.2s ease-out;
 
         &:last-child > * {
           border-bottom: none;
+        }
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        tbody tr:hover {
+          background: rgba($cream, 0.04);
         }
       }
 
@@ -162,7 +183,8 @@ const copy = professionalsCopy.table
       td {
         display: table-cell;
         padding: 1.1rem 1.2rem;
-        border-bottom: 1px solid $line;
+        border-bottom: 1px solid $cream-line;
+        vertical-align: middle;
       }
 
       td[data-label]::before {
@@ -170,36 +192,53 @@ const copy = professionalsCopy.table
       }
 
       thead th {
-        background: $ink;
-        color: $surface;
+        background: $forest-deep;
+        color: $cream-soft;
         font-size: $text-xs;
-        letter-spacing: 0.08em;
+        font-weight: 700;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
       }
     }
   }
 
+  &__product {
+    @include flex(row, center, flex-start, 0.9rem);
+  }
+
+  // Las fotos vienen con fondo blanco: el recuadro crema las integra.
+  &__photo {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: $radius-sm;
+    background: $cream;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 0.25rem;
+      mix-blend-mode: multiply;
+    }
+  }
+
   &__name {
-    @include flex(row, center, flex-start, 0.5rem);
+    display: block;
     font-family: $font-display;
     font-size: 1.05rem;
     font-weight: 800;
     white-space: nowrap;
   }
 
-  &__dot {
-    width: 0.7rem;
-    height: 0.7rem;
-    border-radius: 50%;
-    background: var(--p);
-  }
-
   &__actives {
     list-style: none;
     @include flex(column, flex-start, flex-start, 0.2rem);
+    color: $cream-soft;
 
     b {
-      color: $ink-soft;
+      color: $cream;
       font-weight: 700;
     }
   }
@@ -211,17 +250,28 @@ const copy = professionalsCopy.table
   }
 
   &__link {
-    @include flex(row, center, flex-start, 0.4rem);
+    min-height: 2.75rem;
+    @include flex(row, center, flex-start, 0.45rem);
     font-weight: 700;
-    color: $accent-deep;
+    color: $cream;
     white-space: nowrap;
+    text-decoration: underline;
+    text-decoration-color: $cream-line;
+    text-underline-offset: 0.3em;
 
     i {
-      transition: transform 0.3s $ease;
+      font-size: 0.85em;
+      transition: transform 0.2s ease-out;
     }
 
-    &:hover i {
-      transform: translateX(4px);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        text-decoration-color: $cream;
+      }
+
+      &:hover i {
+        transform: translateX(4px);
+      }
     }
   }
 }
