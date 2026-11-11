@@ -1,4 +1,4 @@
-import { computed, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
 import type { ApiError, LeadInput, LeadType } from '@/types'
 import { professionalsCopy } from '@/config/pages.copy'
 import { leadService } from '@/services/lead.service'
@@ -56,9 +56,24 @@ export function useLeadForm(initialType: LeadType = 'medico') {
     touched[field] = true
   }
 
+  // En móvil el formulario es largo: sin esto, los errores quedan fuera de
+  // pantalla y parece que el botón no hizo nada.
+  async function focusFirstError() {
+    await nextTick()
+    const el = document.querySelector<HTMLElement>('[aria-invalid="true"]')
+    if (!el) return
+    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollIntoView({ block: 'center', behavior: smooth ? 'smooth' : 'auto' })
+    el.focus({ preventScroll: true })
+  }
+
   async function submit(): Promise<boolean> {
     ;(Object.keys(touched) as Field[]).forEach((f) => (touched[f] = true))
-    if (!isValid.value || sending.value) return false
+    if (!isValid.value) {
+      focusFirstError()
+      return false
+    }
+    if (sending.value) return false
     sending.value = true
     try {
       const payload: LeadInput = {
@@ -95,5 +110,23 @@ export function useLeadForm(initialType: LeadType = 'medico') {
     sent.value = false
   }
 
-  return { form, website, sending, sent, successMessage, errorFor, touch, submit, reset }
+  /** Marca un producto de interés sin duplicarlo (p. ej. el que viene en la URL). */
+  function preselect(product: string) {
+    if (!form.productsOfInterest.includes(product)) {
+      form.productsOfInterest = [...form.productsOfInterest, product]
+    }
+  }
+
+  return {
+    form,
+    website,
+    sending,
+    sent,
+    successMessage,
+    errorFor,
+    touch,
+    submit,
+    reset,
+    preselect,
+  }
 }
