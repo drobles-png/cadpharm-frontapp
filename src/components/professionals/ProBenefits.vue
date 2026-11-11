@@ -7,7 +7,7 @@ const copy = professionalsCopy.benefits
 
 <template>
   <section class="benefits">
-    <SectionHeading :eyebrow="copy.eyebrow" :title="copy.title" />
+    <SectionHeading :title="copy.title" />
     <ul class="benefits__grid">
       <li
         v-for="(item, i) in copy.items"
@@ -17,7 +17,6 @@ const copy = professionalsCopy.benefits
         :data-reveal-delay="(i * 0.08).toFixed(2)"
       >
         <article class="benefit">
-          <span class="benefit__num" aria-hidden="true">0{{ i + 1 }}</span>
           <span class="benefit__icon"><i :class="item.icon" aria-hidden="true"></i></span>
           <h3 class="benefit__title">{{ item.title }}</h3>
           <p class="benefit__text">{{ item.text }}</p>
@@ -57,28 +56,21 @@ const copy = professionalsCopy.benefits
   position: relative;
   flex: 1;
   padding: 1.6rem;
-  border-radius: $radius-lg;
-  background: $surface;
-  border: 1px solid $line;
+  border-radius: $radius-md;
+  background: $forest-raised;
+  border: 1px solid $cream-line;
+  color: $cream;
   overflow: hidden;
-  transition:
-    transform 0.5s $ease,
-    box-shadow 0.5s $ease;
+  transition: border-color 0.2s ease-out;
 
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: $shadow-md;
-  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: $cream-soft;
+    }
 
-  &__num {
-    position: absolute;
-    right: 1rem;
-    top: 0.4rem;
-    font-family: $font-display;
-    font-size: 3.5rem;
-    font-weight: 800;
-    letter-spacing: -0.05em;
-    color: $sand;
+    &:hover .benefit__icon {
+      transform: translateY(-2px);
+    }
   }
 
   &__icon {
@@ -87,15 +79,11 @@ const copy = professionalsCopy.benefits
     height: 3.2rem;
     border-radius: $radius-sm;
     @include flex(row, center, center);
-    background: $brand-blue-soft;
-    color: $brand-blue;
+    background: $cream;
+    color: $forest;
     font-size: 1.3rem;
     margin-bottom: 1.2rem;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  &:hover &__icon {
-    transform: rotate(-10deg) scale(1.1);
+    transition: transform 0.2s ease-out;
   }
 
   &__title {
@@ -107,7 +95,8 @@ const copy = professionalsCopy.benefits
 
   &__text {
     font-size: $text-sm;
-    color: $ink-soft;
+    line-height: 1.6;
+    color: $cream-soft;
   }
 }
 </style>
