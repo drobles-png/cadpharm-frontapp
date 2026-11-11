@@ -1,4 +1,5 @@
 import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { adminService } from '@/services/admin.service'
 import { leadStatus, leadsCopy } from '@/config/admin.copy'
 import { useAdminBadges } from '@/composables/useAdminBadges'
@@ -11,14 +12,18 @@ export function useAdminLeads() {
   const toast = useToastStore()
   const { refreshBadges } = useAdminBadges()
 
+  const route = useRoute()
+
+  // El panel de inicio enlaza con ?status=new y con ?lead=<id> para abrir uno directo.
+  const initialStatus = String(route.query.status ?? '') as LeadStatus
   const type = ref<LeadType | ''>('')
-  const status = ref<LeadStatus | ''>('')
+  const status = ref<LeadStatus | ''>(STATUSES.includes(initialStatus) ? initialStatus : '')
   const page = ref(1)
   const leads = ref<Lead[]>([])
   const pages = ref(1)
   const loading = ref(true)
   const counts = ref<Record<string, number>>({})
-  const selectedId = ref<string | null>(null)
+  const selectedId = ref<string | null>(typeof route.query.lead === 'string' ? route.query.lead : null)
   const saving = ref(false)
 
   const selected = computed(() => leads.value.find((l) => l._id === selectedId.value) || null)
