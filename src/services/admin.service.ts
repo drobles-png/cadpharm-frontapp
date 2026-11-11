@@ -1,22 +1,5 @@
 import APIBase from './httpBase'
-import type {
-  AdminStats,
-  Lead,
-  LeadStatus,
-  LeadType,
-  Order,
-  OrderStatus,
-  Paginated,
-  Product,
-  ProductInput,
-} from '@/types'
-
-export interface OrderQuery {
-  status?: OrderStatus | ''
-  q?: string
-  page?: number
-  limit?: number
-}
+import type { Lead, LeadStatus, LeadType, Paginated, Product, ProductInput } from '@/types'
 
 export interface LeadQuery {
   status?: LeadStatus | ''
@@ -36,11 +19,6 @@ function toQuery(params: Record<string, string | number | undefined>): string {
 }
 
 class AdminService extends APIBase {
-  async stats(): Promise<AdminStats> {
-    const { data } = await this.get<AdminStats>('admin/stats')
-    return data
-  }
-
   // ─── Productos ───────────────────────────────────────────────────────
 
   async products(): Promise<Product[]> {
@@ -76,29 +54,6 @@ class AdminService extends APIBase {
       timeout: 60000,
     })
     return data.url
-  }
-
-  // ─── Pedidos ─────────────────────────────────────────────────────────
-
-  async orders(query: OrderQuery = {}): Promise<Paginated<Order>> {
-    const { data } = await this.get<Paginated<Order>>(
-      `admin/orders${toQuery({ ...query })}`,
-    )
-    return data
-  }
-
-  async order(id: string): Promise<Order> {
-    const { data } = await this.get<Order>(`admin/orders/${encodeURIComponent(id)}`)
-    return data
-  }
-
-  async updateOrderStatus(id: string, status: OrderStatus, note?: string): Promise<Order> {
-    const body = note ? { status, note } : { status }
-    const { data } = await this.patch<Order>(
-      `admin/orders/${encodeURIComponent(id)}/status`,
-      body,
-    )
-    return data
   }
 
   // ─── Mensajes ────────────────────────────────────────────────────────
