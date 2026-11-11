@@ -64,20 +64,44 @@ const id = useId()
 </template>
 
 <style scoped lang="scss">
+// Vive sobre la tarjeta crema del formulario: texto verde e inputs blancos.
+$danger-ink: #b3261e; // $danger oscurecido para pasar 4.5:1 sobre crema
+
 .field {
   @include flex(column, stretch, flex-start, 0.1rem);
 
+  &__label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: $forest;
+  }
+
   &__optional {
-    font-weight: 400;
-    color: $ink-muted;
+    font-weight: 500;
+    color: rgba($forest, 0.72);
   }
 
   &__input {
     // 16px evita el zoom automático de iOS al enfocar.
     font-size: 1rem;
-    padding: 0.85rem 1rem;
+    min-height: 3rem;
+    padding: 0.8rem 1rem;
     border-radius: $radius-sm;
-    border-width: 1.5px;
+    border: 1.5px solid rgba($forest, 0.2);
+    background: $surface;
+    color: $forest;
+    transition:
+      border-color 0.2s ease-out,
+      box-shadow 0.2s ease-out;
+
+    &::placeholder {
+      color: rgba($forest, 0.72);
+    }
+
+    &:focus {
+      border-color: $forest;
+      box-shadow: 0 0 0 3px rgba($forest, 0.18);
+    }
 
     &--area {
       resize: vertical;
@@ -86,18 +110,18 @@ const id = useId()
   }
 
   &--error &__input {
-    border-color: $danger;
+    border-color: $danger-ink;
 
     &:focus {
-      box-shadow: 0 0 0 3px $danger-bg;
+      box-shadow: 0 0 0 3px rgba($danger-ink, 0.18);
     }
   }
 
   &__error {
     @include flex(row, center, flex-start, 0.4rem);
     font-size: $text-xs;
-    font-weight: 600;
-    color: $danger;
+    font-weight: 700;
+    color: $danger-ink;
     margin-top: 0.35rem;
   }
 }
