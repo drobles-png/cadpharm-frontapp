@@ -89,9 +89,9 @@ withDefaults(
   }
 
   &__sub {
-    font-size: 0.56rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.42em;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     color: $ink-soft;
     padding-left: 0.05em;
