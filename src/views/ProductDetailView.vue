@@ -1,37 +1,24 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { productCopy as copy } from '@/config/pages.copy'
+import { detailCopy as copy, productPhotos } from '@/config/info.copy'
 import { useProductDetail } from '@/composables/useProductDetail'
 import { useReveal } from '@/composables/useReveal'
-import ProductGallery from '@/components/product/ProductGallery.vue'
-import ProductBuyBox from '@/components/product/ProductBuyBox.vue'
-import ProductTabs from '@/components/product/ProductTabs.vue'
+import ProductInfo from '@/components/product/ProductInfo.vue'
 import ProductProSheet from '@/components/product/ProductProSheet.vue'
-import ProductMobileBar from '@/components/product/ProductMobileBar.vue'
 import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton.vue'
 import ProductCard from '@/components/product/ProductCard.vue'
 
 const route = useRoute()
 const slug = computed(() => String(route.params.slug ?? ''))
-const { product, loading, notFound, quantity, related, waHref, addToCart, buyNow } =
-  useProductDetail(slug)
+const { product, loading, notFound, related, fullName, waHref } = useProductDetail(slug)
 const { rescan } = useReveal()
 
-// La barra móvil aparece cuando la caja de compra sale de pantalla.
-const buyRef = ref<HTMLElement | null>(null)
-const buyVisible = ref(true)
-let observer: IntersectionObserver | null = null
-
-watch(buyRef, (el) => {
-  observer?.disconnect()
-  if (!el) return
-  observer = new IntersectionObserver(([entry]) => (buyVisible.value = !!entry?.isIntersecting), {
-    rootMargin: '0px 0px -10% 0px',
-  })
-  observer.observe(el)
-})
-onBeforeUnmount(() => observer?.disconnect())
+const photo = computed(() =>
+  product.value
+    ? (productPhotos[product.value.slug] ?? product.value.images[0] ?? '/img/placeholder.svg')
+    : '',
+)
 
 watch([product, () => related.value.length], async () => {
   await nextTick()
@@ -42,6 +29,10 @@ watch([product, () => related.value.length], async () => {
 <template>
   <div class="detail">
     <div class="detail__inner">
+      <RouterLink to="/productos" class="detail__back">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>{{ copy.back }}
+      </RouterLink>
+
       <Transition name="fade" mode="out-in">
         <ProductDetailSkeleton v-if="loading" />
 
@@ -49,26 +40,24 @@ watch([product, () => related.value.length], async () => {
           <i class="fa-solid fa-box-open" aria-hidden="true"></i>
           <h1>{{ copy.notFoundTitle }}</h1>
           <p>{{ copy.notFoundText }}</p>
-          <RouterLink to="/productos" class="btn btn--primary btn--lg">{{ copy.back }}</RouterLink>
+          <RouterLink to="/productos" class="btn btn--cream btn--lg">{{ copy.back }}</RouterLink>
         </section>
 
         <div v-else :key="product.slug" class="detail__content">
           <div class="detail__top">
-            <ProductGallery :product="product" class="detail__gallery" />
-            <div ref="buyRef" class="detail__buy">
-              <ProductBuyBox
-                v-model:quantity="quantity"
-                :product="product"
-                :wa-href="waHref"
-                @add="addToCart"
-                @buy="buyNow"
+            <figure class="detail__photo">
+              <img
+                :src="photo"
+                :alt="`Caja de ${fullName}`"
+                fetchpriority="high"
+                width="900"
+                height="1200"
               />
+            </figure>
+            <div class="detail__info">
+              <ProductInfo :product="product" />
+              <ProductProSheet :product="product" :wa-href="waHref" />
             </div>
-          </div>
-
-          <div class="detail__info">
-            <ProductTabs :product="product" class="detail__tabs" />
-            <ProductProSheet :product="product" class="detail__sheet" />
           </div>
 
           <section v-if="related.length" class="detail__related">
@@ -79,19 +68,12 @@ watch([product, () => related.value.length], async () => {
                 :key="item._id"
                 class="detail__cell"
                 data-reveal
-                :data-reveal-delay="(i * 0.08).toFixed(2)"
+                :data-reveal-delay="(i * 0.06).toFixed(2)"
               >
-                <ProductCard :product="item" />
+                <ProductCard :product="item" compact />
               </div>
             </div>
           </section>
-
-          <ProductMobileBar
-            :product="product"
-            :visible="!buyVisible"
-            :wa-href="waHref"
-            @add="addToCart"
-          />
         </div>
       </Transition>
     </div>
@@ -100,14 +82,30 @@ watch([product, () => related.value.length], async () => {
 
 <style scoped lang="scss">
 .detail {
-  padding-block: 2rem $space-section;
+  padding-block: 1.5rem $space-section;
+  color: $cream;
 
   @include from('md') {
-    padding-top: 3rem;
+    padding-top: 2.5rem;
   }
 
   &__inner {
     @include container(1280px);
+    @include flex(column, stretch, flex-start, 1.5rem);
+  }
+
+  &__back {
+    align-self: flex-start;
+    min-height: 2.75rem;
+    @include flex(row, center, flex-start, 0.5rem);
+    font-size: $text-sm;
+    font-weight: 700;
+    color: $cream-soft;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $cream;
+    }
   }
 
   &__content {
@@ -120,53 +118,48 @@ watch([product, () => related.value.length], async () => {
     @include from('lg') {
       flex-direction: row;
       align-items: flex-start;
-      gap: 3.5rem;
+      gap: 4rem;
     }
   }
 
-  &__gallery {
-    @include from('lg') {
-      flex: 1 1 52%;
-    }
-  }
+  // La foto acompaña mientras se lee la ficha en desktop.
+  &__photo {
+    flex: 0 0 auto;
+    background: $cream;
+    border-radius: $radius-md;
+    overflow: hidden;
 
-  &__buy {
     @include from('lg') {
-      flex: 1 1 48%;
+      flex: 0 0 46%;
+      align-self: flex-start;
       position: sticky;
-      top: 5.5rem;
+      top: 6rem;
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      // Fondo blanco de la foto → crema del recuadro
+      mix-blend-mode: multiply;
     }
   }
 
   &__info {
-    @include flex(column, stretch, flex-start, 2.5rem);
-
-    @include from('lg') {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 3.5rem;
-    }
-  }
-
-  &__tabs {
+    flex: 1;
     min-width: 0;
-
-    @include from('lg') {
-      flex: 1 1 58%;
-    }
+    @include flex(column, stretch, flex-start, 2.5rem);
   }
 
-  &__sheet {
-    @include from('lg') {
-      flex: 1 1 42%;
-    }
+  &__related {
+    @include flex(column, stretch, flex-start, 1.5rem);
+    padding-top: $space-lg;
+    border-top: 1px solid $cream-line;
   }
 
   &__related-title {
-    font-size: $display-sm;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    margin-bottom: 1.5rem;
+    @include display($display-sm, 700);
   }
 
   &__grid {
@@ -192,25 +185,18 @@ watch([product, () => related.value.length], async () => {
   }
 
   &__missing {
-    @include flex(column, center, center, 0.9rem);
+    @include flex(column, center, center, 1rem);
     text-align: center;
-    padding-block: 5rem;
+    padding: 5rem 1rem;
 
     > i {
-      font-size: 3rem;
-      color: $accent;
-    }
-
-    h1 {
-      font-size: $display-md;
-      font-weight: 800;
-      letter-spacing: -0.04em;
+      font-size: 2.5rem;
+      color: $cream-soft;
     }
 
     p {
-      color: $ink-soft;
-      max-width: 42ch;
-      margin-bottom: 0.5rem;
+      color: $cream-soft;
+      max-width: 40ch;
     }
   }
 }
