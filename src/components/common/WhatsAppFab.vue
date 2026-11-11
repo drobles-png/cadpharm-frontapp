@@ -28,13 +28,14 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
       :aria-label="layoutCopy.fab.label"
     >
       <span class="fab__tooltip" aria-hidden="true">{{ layoutCopy.fab.tooltip }}</span>
-      <span class="fab__ring" aria-hidden="true"></span>
       <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
     </a>
   </Transition>
 </template>
 
 <style scoped lang="scss">
+// Verde WhatsApp sobre el verde profundo del sitio: el aro crema lo separa del
+// fondo sin depender del tono.
 .fab {
   position: fixed;
   right: 1rem;
@@ -47,8 +48,10 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
   color: $surface;
   font-size: 1.75rem;
   @include flex(row, center, center);
-  box-shadow: 0 14px 30px rgba(#25d366, 0.4);
-  transition: transform 0.35s $ease;
+  box-shadow:
+    0 0 0 3px rgba($cream, 0.9),
+    0 12px 28px rgba($forest-deep, 0.55);
+  transition: transform 0.2s ease-out;
 
   @include from('md') {
     right: 1.5rem;
@@ -57,33 +60,31 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
     height: 3.9rem;
   }
 
-  &:hover {
-    transform: scale(1.08) rotate(-6deg);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: scale(1.06);
+    }
   }
 
-  &__ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 2px solid #25d366;
-    animation: fab-ring 2.6s $ease infinite;
+  &:active {
+    transform: scale(0.96);
   }
 
   &__tooltip {
     position: absolute;
     right: calc(100% + 0.8rem);
     white-space: nowrap;
-    background: $ink;
-    color: $surface;
+    background: $cream;
+    color: $forest;
     font-size: $text-sm;
-    font-weight: 600;
+    font-weight: 700;
     padding: 0.55rem 0.9rem;
     border-radius: $radius-pill;
     opacity: 0;
-    transform: translateX(8px);
+    transform: translateX(6px);
     transition:
-      opacity 0.3s ease,
-      transform 0.3s $ease;
+      opacity 0.2s ease-out,
+      transform 0.2s ease-out;
     pointer-events: none;
     display: none;
 
@@ -92,43 +93,32 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
     }
   }
 
-  &:hover &__tooltip,
+  @media (hover: hover) and (pointer: fine) {
+    &:hover &__tooltip {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   &:focus-visible &__tooltip {
     opacity: 1;
     transform: none;
   }
 
-  @include focus-ring($ink);
+  @include focus-ring($cream);
 }
 
 // En la ficha de producto móvil hay barra inferior fija: el botón sube.
-body.has-buybar .fab {
-  @include until('lg') {
-    bottom: calc(5.5rem + env(safe-area-inset-bottom));
-  }
-}
-
 .fab-enter-active,
 .fab-leave-active {
   transition:
-    opacity 0.35s ease,
-    transform 0.45s $ease;
+    opacity 0.2s ease-out,
+    transform 0.25s ease-out;
 }
 
 .fab-enter-from,
 .fab-leave-to {
   opacity: 0;
-  transform: scale(0.4) translateY(20px);
-}
-
-@keyframes fab-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1.6);
-    opacity: 0;
-  }
+  transform: scale(0.6) translateY(12px);
 }
 </style>
