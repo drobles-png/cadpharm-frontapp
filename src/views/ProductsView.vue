@@ -3,12 +3,12 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { gsap } from 'gsap'
 import { Flip } from 'gsap/Flip'
-import { site, whatsappLink } from '@/config/site'
-import { productsCopy as copy } from '@/config/pages.copy'
+import { site } from '@/config/site'
+import { catalogCopy as copy } from '@/config/info.copy'
 import { useCatalog } from '@/composables/useCatalog'
 import { useReveal } from '@/composables/useReveal'
 import { prefersReducedMotion } from '@/composables/useGsap'
-import SectionHeading from '@/components/common/SectionHeading.vue'
+import BannerCarousel from '@/components/product/BannerCarousel.vue'
 import CategoryChips from '@/components/product/CategoryChips.vue'
 import ProductCard from '@/components/product/ProductCard.vue'
 import ProductCardSkeleton from '@/components/product/ProductCardSkeleton.vue'
@@ -73,13 +73,25 @@ onMounted(async () => {
 
 <template>
   <div class="catalog">
-    <section class="catalog__hero">
-      <span class="catalog__blob" aria-hidden="true"></span>
-      <SectionHeading :eyebrow="copy.eyebrow" :title="copy.title" :text="copy.text" as="h1" />
-      <CategoryChips :model-value="category" :counts="counts" @update:model-value="setCategory" />
+    <BannerCarousel />
+
+    <section class="catalog__head">
+      <div class="catalog__intro">
+        <span class="eyebrow-cream">{{ copy.eyebrow }}</span>
+        <h1 class="catalog__title">{{ copy.title }}</h1>
+      </div>
+      <p class="catalog__text">{{ copy.text }}</p>
     </section>
 
-    <section class="catalog__body" aria-live="polite">
+    <section class="catalog__body" aria-labelledby="catalog-list" aria-live="polite">
+      <h2 id="catalog-list" class="visually-hidden">{{ copy.listTitle }}</h2>
+      <CategoryChips
+        class="catalog__chips"
+        :model-value="category"
+        :counts="counts"
+        @update:model-value="setCategory"
+      />
+
       <div v-if="loading" class="catalog__grid">
         <ProductCardSkeleton v-for="n in 4" :key="n" />
       </div>
@@ -88,7 +100,7 @@ onMounted(async () => {
         <i class="fa-solid fa-plug-circle-exclamation" aria-hidden="true"></i>
         <h2>{{ copy.errorTitle }}</h2>
         <p>{{ error }}</p>
-        <button type="button" class="btn btn--dark" @click="load(true)">{{ copy.errorCta }}</button>
+        <button type="button" class="btn btn--cream" @click="load(true)">{{ copy.errorCta }}</button>
       </div>
 
       <template v-else>
@@ -109,16 +121,13 @@ onMounted(async () => {
             <i class="fa-solid fa-seedling" aria-hidden="true"></i>
             <h2>{{ copy.emptyTitle }}</h2>
             <p>{{ copy.emptyText }}</p>
-            <div class="catalog__empty-actions">
-              <button type="button" class="btn btn--dark" @click="setCategory('')">
-                {{ copy.emptyCta }}
-              </button>
-              <a :href="whatsappLink()" class="btn btn--ghost" target="_blank" rel="noopener">
-                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>WhatsApp
-              </a>
-            </div>
+            <button type="button" class="btn btn--cream" @click="setCategory('')">
+              {{ copy.emptyCta }}
+            </button>
           </div>
         </Transition>
+
+        <p class="catalog__note">{{ copy.note }}</p>
       </template>
     </section>
   </div>
@@ -127,35 +136,39 @@ onMounted(async () => {
 <style scoped lang="scss">
 .catalog {
   overflow-x: clip;
+  padding-bottom: $space-section;
 
-  &__hero {
-    position: relative;
-    isolation: isolate;
+  &__head {
     @include container(1280px);
-    @include flex(column, stretch, flex-start, 2rem);
-    padding-block: 3rem 2rem;
+    @include flex(column, flex-start, flex-start, 1rem);
+    padding-block: 3.5rem 2rem;
 
     @include from('md') {
-      padding-top: 4.5rem;
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 3rem;
+      padding-top: 5rem;
     }
   }
 
-  &__blob {
-    position: absolute;
-    z-index: -1;
-    width: 26rem;
-    height: 26rem;
-    right: -6rem;
-    top: -8rem;
-    border-radius: 50%;
-    background: rgba($lime, 0.45);
-    filter: blur(70px);
-    animation: blob 14s ease-in-out infinite alternate;
+  &__intro {
+    @include flex(column, flex-start, flex-start, 0.85rem);
+  }
+
+  &__title {
+    @include display($display-md, 700);
+    color: $cream;
+  }
+
+  &__text {
+    max-width: 30rem;
+    color: $cream-soft;
   }
 
   &__body {
     @include container(1280px);
-    padding-bottom: $space-section;
+    @include flex(column, stretch, flex-start, 1.75rem);
   }
 
   &__grid {
@@ -185,13 +198,12 @@ onMounted(async () => {
     @include flex(column, center, center, 0.8rem);
     text-align: center;
     padding: 4rem 1.5rem;
-    border-radius: $radius-lg;
-    background: $surface;
-    border: 1px dashed $line;
+    border-radius: $radius-md;
+    border: 1px dashed $cream-line;
 
     > i {
-      font-size: 2.5rem;
-      color: $accent;
+      font-size: 2rem;
+      color: $cream-soft;
     }
 
     h2 {
@@ -200,21 +212,17 @@ onMounted(async () => {
     }
 
     p {
-      color: $ink-soft;
+      color: $cream-soft;
       max-width: 40ch;
     }
   }
 
-  &__empty-actions {
-    @include flex(row, center, center, 0.6rem);
-    flex-wrap: wrap;
-    margin-top: 0.5rem;
-  }
-}
-
-@keyframes blob {
-  to {
-    transform: translate(-6rem, 4rem) scale(1.2);
+  &__note {
+    padding-top: 1.25rem;
+    border-top: 1px solid $cream-line;
+    font-size: $text-sm;
+    color: $cream-muted;
+    max-width: 70ch;
   }
 }
 </style>
