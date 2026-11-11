@@ -70,90 +70,6 @@ export interface Product {
 
 export type ProductInput = Omit<Product, '_id' | 'createdAt' | 'updatedAt'>
 
-// ─── Pedidos ───────────────────────────────────────────────────────────
-
-export type PaymentMethod = 'payphone' | 'whatsapp'
-
-export type OrderStatus =
-  | 'pending'
-  | 'paid'
-  | 'confirmed'
-  | 'shipped'
-  | 'delivered'
-  | 'cancelled'
-  | 'failed'
-
-export interface OrderCustomer {
-  name: string
-  email: string
-  phone: string
-  documentId: string
-  city: string
-  address: string
-  notes: string
-}
-
-export interface OrderItem {
-  product: string
-  name: string
-  slug: string
-  image: string
-  unitPrice: number
-  quantity: number
-  subtotal: number
-}
-
-export interface Order {
-  _id: string
-  orderNumber: string
-  items: OrderItem[]
-  subtotal: number
-  shipping: number
-  total: number
-  customer: OrderCustomer
-  paymentMethod: PaymentMethod
-  status: OrderStatus
-  statusHistory: { status: OrderStatus; at: string; note?: string }[]
-  clientTransactionId: string
-  payphoneResponse?: Record<string, unknown> | null
-  createdAt: string
-  updatedAt: string
-}
-
-export interface CreateOrderPayload {
-  items: { productId: string; quantity: number }[]
-  customer: OrderCustomer
-  paymentMethod: PaymentMethod
-}
-
-/** Datos para montar la Cajita de Payphone; solo vienen con paymentMethod "payphone". */
-export interface PayphoneBoxConfig {
-  token: string
-  storeId: string
-  clientTransactionId: string
-  amount: number
-  amountWithoutTax: number
-  currency: 'USD'
-  reference: string
-}
-
-export interface CreateOrderResponse {
-  order: Order
-  payphone: PayphoneBoxConfig | null
-}
-
-export interface ConfirmPaymentResponse {
-  order: Order
-  status: 'paid' | 'failed' | 'pending'
-  message: string
-}
-
-export interface PublicConfig {
-  payphoneEnabled: boolean
-  whatsapp: string
-  shippingNote: string
-}
-
 // ─── Profesionales / contacto ──────────────────────────────────────────
 
 export type LeadType = 'medico' | 'farmacia' | 'distribuidor' | 'paciente'
@@ -176,18 +92,4 @@ export interface Lead extends LeadInput {
   status: LeadStatus
   note: string
   createdAt: string
-}
-
-// ─── Admin ─────────────────────────────────────────────────────────────
-
-export interface AdminStats {
-  revenueMonth: number
-  revenuePrevMonth: number
-  ordersMonth: number
-  pendingOrders: number
-  newLeads: number
-  avgTicket: number
-  salesByDay: { date: string; total: number; orders: number }[]
-  topProducts: { productId: string; name: string; units: number; revenue: number }[]
-  recentOrders: Order[]
 }
