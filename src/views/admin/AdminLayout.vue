@@ -12,7 +12,7 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const toast = useToastStore()
-const { pendingOrders, newLeads, refreshBadges } = useAdminBadges()
+const { newLeads, refreshBadges } = useAdminBadges()
 
 const drawer = ref(false)
 useBodyScroll(drawer)
@@ -26,7 +26,7 @@ const today = new Intl.DateTimeFormat('es-EC', {
   day: 'numeric',
   month: 'long',
 }).format(new Date())
-const alerts = computed(() => pendingOrders.value + newLeads.value)
+const alerts = computed(() => newLeads.value)
 
 function logout() {
   userStore.clear()
@@ -52,7 +52,7 @@ onMounted(refreshBadges)
         <strong>{{ adminBrand.name }}</strong> {{ adminBrand.panel }}
       </RouterLink>
       <a href="/" target="_blank" rel="noopener" class="admin__store" :aria-label="copy.store">
-        <i class="fa-solid fa-store"></i>
+        <i class="fa-solid fa-globe"></i>
       </a>
     </header>
 
