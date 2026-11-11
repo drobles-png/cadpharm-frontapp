@@ -1,64 +1,66 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Product } from '@/types'
-import { productCopy as copy } from '@/config/pages.copy'
+import { detailCopy } from '@/config/info.copy'
 
-/** Ficha técnica resumida para médicos y farmacias. */
-const props = defineProps<{ product: Product }>()
+/**
+ * Ficha técnica resumida para el médico: los datos de registro del producto en
+ * un solo bloque, más los dos caminos de contacto.
+ */
+const props = defineProps<{ product: Product; waHref: string }>()
+const copy = detailCopy.pro
 
+// Solo se muestran las filas que el producto tiene cargadas en el panel.
 const rows = computed(() =>
   [
-    { label: copy.proFields.registry, value: props.product.sanitaryRegistry },
-    { label: copy.proFields.presentation, value: props.product.presentation },
-    { label: copy.proFields.audience, value: props.product.audience },
-    { label: copy.proFields.manufacturer, value: props.product.manufacturer },
-    { label: copy.proFields.barcode, value: props.product.barcode },
+    { label: copy.registry, value: props.product.sanitaryRegistry, code: true },
+    { label: copy.presentation, value: props.product.presentation, code: false },
+    { label: copy.audience, value: props.product.audience, code: false },
+    { label: copy.manufacturer, value: props.product.manufacturer, code: false },
+    { label: copy.barcode, value: props.product.barcode, code: true },
   ].filter((row) => row.value),
 )
 </script>
 
 <template>
-  <aside class="sheet" data-reveal>
-    <div class="sheet__head">
+  <section class="sheet" aria-labelledby="pro-sheet-title">
+    <header class="sheet__head">
       <span class="sheet__icon"><i class="fa-solid fa-file-medical" aria-hidden="true"></i></span>
       <div>
-        <h2 class="sheet__title">{{ copy.proTitle }}</h2>
-        <p class="sheet__text">{{ copy.proText }}</p>
+        <h2 id="pro-sheet-title" class="sheet__title">{{ copy.title }}</h2>
+        <p class="sheet__text">{{ copy.text }}</p>
       </div>
-    </div>
+    </header>
+
     <dl class="sheet__rows">
       <div v-for="row in rows" :key="row.label" class="sheet__row">
         <dt>{{ row.label }}</dt>
-        <dd>{{ row.value }}</dd>
+        <dd :class="{ 'sheet__code': row.code }">{{ row.value }}</dd>
       </div>
     </dl>
-    <RouterLink to="/profesionales" class="btn btn--light sheet__cta">
-      <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>{{ copy.proCta }}
-    </RouterLink>
-  </aside>
+
+    <div class="sheet__actions">
+      <RouterLink
+        :to="{ path: '/profesionales', hash: '#contacto', query: { producto: product.slug } }"
+        class="btn btn--cream btn--lg"
+      >
+        <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>{{ copy.cta }}
+      </RouterLink>
+      <a :href="waHref" class="btn btn--line btn--lg" target="_blank" rel="noopener">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>{{ copy.whatsapp }}
+      </a>
+    </div>
+  </section>
 </template>
 
 <style scoped lang="scss">
 .sheet {
-  position: relative;
-  overflow: hidden;
-  @include flex(column, stretch, flex-start, 1.4rem);
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  border-radius: $radius-lg;
-  background: $ink;
-  color: $surface;
-
-  &::after {
-    content: '';
-    position: absolute;
-    width: 20rem;
-    height: 20rem;
-    right: -8rem;
-    top: -8rem;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba($accent, 0.4), transparent 65%);
-    pointer-events: none;
-  }
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: $radius-md;
+  background: $forest-raised;
+  border: 1px solid $cream-line;
+  color: $cream;
+  @include flex(column, stretch, flex-start, 1.5rem);
 
   &__head {
     @include flex(row, flex-start, flex-start, 1rem);
@@ -69,49 +71,68 @@ const rows = computed(() =>
     width: 3rem;
     height: 3rem;
     border-radius: $radius-sm;
-    @include flex(row, center, center);
-    background: $lime;
-    color: $ink;
+    background: $cream;
+    color: $forest;
     font-size: 1.2rem;
+    @include flex(row, center, center);
   }
 
   &__title {
-    font-size: $text-xl;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    @include display($display-sm, 700);
   }
 
   &__text {
+    margin-top: 0.4rem;
     font-size: $text-sm;
-    color: rgba(255, 255, 255, 0.7);
+    color: $cream-soft;
   }
 
   &__rows {
-    @include flex-cards(220px, 0.75rem);
+    @include flex(column, stretch, flex-start, 0);
+    border-top: 1px solid $cream-line;
   }
 
   &__row {
-    padding: 0.9rem 1rem;
-    border-radius: $radius-sm;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding-block: 0.85rem;
+    border-bottom: 1px solid $cream-line;
+    @include flex(column, stretch, flex-start, 0.2rem);
+
+    @include from('sm') {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
 
     dt {
-      font-size: $text-xs;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.55);
+      flex-shrink: 0;
+      font-size: $text-sm;
+      color: $cream-muted;
     }
 
     dd {
       font-weight: 700;
-      overflow-wrap: anywhere;
+
+      @include from('sm') {
+        text-align: right;
+      }
     }
   }
 
-  &__cta {
-    position: relative;
-    z-index: 1;
-    align-self: flex-start;
+  // Códigos de registro y de barras: en una línea y con cifras parejas
+  &__code {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  &__actions {
+    @include flex(column, stretch, flex-start, 0.75rem);
+
+    @include from('sm') {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
   }
 }
 </style>
