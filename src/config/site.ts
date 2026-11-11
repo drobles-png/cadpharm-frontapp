@@ -1,12 +1,12 @@
 /**
  * El copy es configuración: los textos y datos de la marca viven acá.
  * Los componentes solo consumen y pintan. Cada área puede tener además su
- * propio archivo en src/config/ (home.copy.ts, checkout.copy.ts, ...).
+ * propio archivo en src/config/ (info.copy.ts, pages.copy.ts, ...).
  */
 export const site = {
   name: 'CadPharm',
   legalName: 'CadPharm Laboratorio',
-  tagline: 'Fórmulas que cuidan a tu familia.',
+  tagline: 'Calidad que inspira confianza.',
   description:
     'Laboratorio ecuatoriano de suplementos y fórmulas de venta libre. Hechos en Ecuador, con notificación sanitaria ARCSA.',
   url: 'https://cadpharm.ec',
@@ -26,13 +26,12 @@ export const site = {
     { label: 'Inicio', to: '/' },
     { label: 'Productos', to: '/productos' },
     { label: 'Profesionales', to: '/profesionales' },
-    { label: 'Nosotros', to: '/nosotros' },
+    { label: 'Quiénes somos', to: '/nosotros' },
   ],
   trust: [
     { icon: 'fa-solid fa-shield-heart', label: 'Notificación sanitaria ARCSA' },
     { icon: 'fa-solid fa-flag', label: 'Hecho en Ecuador' },
-    { icon: 'fa-solid fa-truck-fast', label: 'Envíos a todo el país' },
-    { icon: 'fa-solid fa-lock', label: 'Pago seguro' },
+    { icon: 'fa-solid fa-user-doctor', label: 'Información para profesionales' },
   ],
   categories: [
     {
