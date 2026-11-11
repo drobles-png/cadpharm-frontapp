@@ -41,15 +41,6 @@ function onCategory() {
     <AdminField :label="f.presentation" :hint="f.presentationHint" for="p-pres" wide>
       <input id="p-pres" v-model="form.presentation" type="text" />
     </AdminField>
-    <AdminField :label="f.price" :hint="f.priceHint" for="p-price">
-      <div class="basic__money">
-        <span>$</span>
-        <input id="p-price" v-model="form.priceText" type="text" inputmode="decimal" placeholder="0.00" />
-      </div>
-    </AdminField>
-    <AdminField :label="f.stock" for="p-stock">
-      <input id="p-stock" v-model.number="form.stock" type="number" min="0" step="1" inputmode="numeric" />
-    </AdminField>
     <AdminField :label="f.order" :hint="f.orderHint" for="p-order">
       <input id="p-order" v-model.number="form.order" type="number" step="1" inputmode="numeric" />
     </AdminField>
@@ -62,24 +53,6 @@ function onCategory() {
 
 <style scoped lang="scss">
 .basic {
-  &__money {
-    position: relative;
-
-    span {
-      position: absolute;
-      left: 0.95rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-weight: 700;
-      color: $ink-muted;
-    }
-
-    input {
-      padding-left: 1.9rem;
-      font-variant-numeric: tabular-nums;
-    }
-  }
-
   &__switches {
     @include flex(row, center, flex-start, 1.5rem);
     flex: 1 1 100%;
