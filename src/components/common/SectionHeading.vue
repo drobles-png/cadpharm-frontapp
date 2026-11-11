@@ -1,5 +1,9 @@
 <script setup lang="ts">
-/** Encabezado de sección: eyebrow + título + bajada, con reveal al entrar. */
+/**
+ * Encabezado de sección: eyebrow + título + bajada, con reveal al entrar.
+ * `tone="light"` (por defecto) es texto crema para el fondo verde de la web
+ * pública; `tone="dark"` es texto verde para superficies crema.
+ */
 withDefaults(
   defineProps<{
     eyebrow?: string
@@ -9,7 +13,7 @@ withDefaults(
     tone?: 'dark' | 'light'
     as?: 'h1' | 'h2'
   }>(),
-  { eyebrow: '', text: '', align: 'left', tone: 'dark', as: 'h2' },
+  { eyebrow: '', text: '', align: 'left', tone: 'light', as: 'h2' },
 )
 </script>
 
@@ -38,46 +42,50 @@ withDefaults(
   }
 
   &__eyebrow {
-    @include eyebrow;
-    @include flex(row, center, flex-start, 0.55rem);
+    @include flex(row, center, flex-start, 0.6rem);
+    font-size: $text-xs;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
   }
 
   &__dot {
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 0.45rem;
+    height: 0.45rem;
     border-radius: 50%;
-    background: $accent;
-    box-shadow: 0 0 0 4px rgba($accent, 0.18);
+    background: currentColor;
   }
 
   &__title {
-    @include display($display-md, 800);
+    @include display($display-md, 700);
     letter-spacing: -0.035em;
-    color: $ink;
   }
 
   &__text {
     font-size: $text-lg;
-    color: $ink-soft;
+    line-height: 1.6;
     max-width: 40rem;
   }
 
   &--light {
-    .heading__eyebrow {
-      color: $lime;
-    }
-
-    .heading__dot {
-      background: $lime;
-      box-shadow: 0 0 0 4px rgba($lime, 0.2);
+    .heading__eyebrow,
+    .heading__text {
+      color: $cream-soft;
     }
 
     .heading__title {
-      color: $surface;
+      color: $cream;
+    }
+  }
+
+  &--dark {
+    .heading__eyebrow,
+    .heading__text {
+      color: rgba($forest, 0.78);
     }
 
-    .heading__text {
-      color: rgba(255, 255, 255, 0.72);
+    .heading__title {
+      color: $forest;
     }
   }
 }
