@@ -50,16 +50,14 @@ withDefaults(
     animation: skeleton-sweep 1.4s $ease infinite;
   }
 
+  // Web pública (fondo verde): bloque crema translúcido y brillo sutil.
+  // El panel conserva el gris claro de arriba.
+  .app--public &,
   &--dark {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba($cream, 0.08);
 
     &::after {
-      background: linear-gradient(
-        100deg,
-        transparent 20%,
-        rgba(255, 255, 255, 0.12) 50%,
-        transparent 80%
-      );
+      background: linear-gradient(100deg, transparent 20%, rgba($cream, 0.1) 50%, transparent 80%);
     }
   }
 }
