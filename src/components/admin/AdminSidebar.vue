@@ -7,10 +7,9 @@ defineProps<{ userName: string; userEmail: string }>()
 const emit = defineEmits<{ navigate: []; logout: [] }>()
 
 const route = useRoute()
-const { pendingOrders, newLeads } = useAdminBadges()
+const { newLeads } = useAdminBadges()
 
 function badgeFor(key: string) {
-  if (key === 'orders') return pendingOrders.value
   if (key === 'leads') return newLeads.value
   return 0
 }
