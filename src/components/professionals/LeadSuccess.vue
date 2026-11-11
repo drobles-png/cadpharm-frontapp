@@ -17,8 +17,10 @@ const copy = professionalsCopy.form
     <h3 class="success__title">{{ copy.successTitle }}</h3>
     <p class="success__text">{{ message }}</p>
     <div class="success__actions">
-      <button type="button" class="btn btn--dark" @click="$emit('again')">{{ copy.again }}</button>
-      <a :href="whatsappLink()" class="btn btn--ghost" target="_blank" rel="noopener">
+      <button type="button" class="btn success__primary" @click="$emit('again')">
+        {{ copy.again }}
+      </button>
+      <a :href="whatsappLink()" class="btn success__ghost" target="_blank" rel="noopener">
         <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>WhatsApp
       </a>
     </div>
@@ -26,10 +28,12 @@ const copy = professionalsCopy.form
 </template>
 
 <style scoped lang="scss">
+// Vive sobre la tarjeta crema del formulario.
 .success {
   @include flex(column, center, center, 0.8rem);
   text-align: center;
   padding: 3rem 1rem;
+  color: $forest;
 
   &__title {
     font-size: $display-sm;
@@ -38,7 +42,7 @@ const copy = professionalsCopy.form
   }
 
   &__text {
-    color: $ink-soft;
+    color: rgba($forest, 0.78);
     max-width: 36ch;
   }
 
@@ -48,17 +52,43 @@ const copy = professionalsCopy.form
     margin-top: 0.6rem;
   }
 
+  &__primary,
+  &__ghost {
+    min-height: 2.75rem;
+    border: 1.5px solid $forest;
+    transition: background-color 0.2s ease-out;
+  }
+
+  &__primary {
+    background: $forest;
+    color: $cream;
+  }
+
+  &__ghost {
+    color: $forest;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &__primary:hover {
+      background: $forest-raised;
+    }
+
+    &__ghost:hover {
+      background: rgba($forest, 0.06);
+    }
+  }
+
   &__burst {
     position: relative;
     width: 5.5rem;
     height: 5.5rem;
     border-radius: 50%;
-    background: $accent;
-    color: $surface;
+    background: $forest;
+    color: $cream;
     font-size: 2.2rem;
     @include flex(row, center, center);
     margin-bottom: 0.6rem;
-    animation: pop 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: pop 0.28s ease-out both;
 
     span {
       position: absolute;
@@ -68,16 +98,17 @@ const copy = professionalsCopy.form
       height: 0.5rem;
       margin: -0.25rem;
       border-radius: 50%;
-      background: $lime;
+      background: rgba($forest, 0.45);
       transform: rotate(calc(var(--n) * 45deg)) translateY(0);
-      animation: burst 0.9s $ease 0.15s both;
+      animation: burst 0.28s ease-out 0.12s both;
     }
   }
 }
 
 @keyframes pop {
   from {
-    transform: scale(0);
+    opacity: 0;
+    transform: scale(0.6);
   }
 }
 
