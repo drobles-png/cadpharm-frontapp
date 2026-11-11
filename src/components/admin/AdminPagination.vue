@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ordersCopy as copy } from '@/config/admin.copy'
+import { paginationCopy as copy } from '@/config/admin.copy'
 
 defineProps<{ pages: number }>()
 const page = defineModel<number>({ required: true })
