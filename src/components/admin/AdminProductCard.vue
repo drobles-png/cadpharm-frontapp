@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import AdminSwitch from '@/components/admin/AdminSwitch.vue'
 import { productsCopy as copy } from '@/config/admin.copy'
-import { formatCents, imageUrl } from '@/utils/format'
+import { imageUrl } from '@/utils/format'
 import type { Product } from '@/types'
 
 const props = defineProps<{ product: Product }>()
@@ -35,15 +35,6 @@ const featured = computed({
         {{ product.name }} <em v-if="product.nameAccent">{{ product.nameAccent }}</em>
       </RouterLink>
       <p class="pcard__meta">{{ product.categoryLabel || product.category }}</p>
-
-      <div class="pcard__facts">
-        <span class="pcard__price" :class="{ 'pcard__price--tbd': product.price === null }">
-          {{ product.price === null ? copy.noPrice : formatCents(product.price) }}
-        </span>
-        <span class="pcard__stock" :class="{ 'pcard__stock--low': product.stock <= 5 }">
-          <i class="fa-solid fa-boxes-stacked"></i> {{ copy.stock }}: {{ product.stock }}
-        </span>
-      </div>
 
       <div class="pcard__switches">
         <AdminSwitch v-model="published" :label="product.isPublished ? copy.published : copy.hidden" small />
@@ -133,35 +124,6 @@ const featured = computed({
     margin-top: -0.35rem;
     font-size: $text-xs;
     color: $ink-muted;
-  }
-
-  &__facts {
-    @include flex(row, center, space-between, 0.6rem);
-    flex-wrap: wrap;
-  }
-
-  &__price {
-    font-weight: 800;
-    font-size: 1.05rem;
-    font-variant-numeric: tabular-nums;
-
-    &--tbd {
-      font-size: $text-sm;
-      padding: 0.2rem 0.6rem;
-      border-radius: $radius-pill;
-      background: $warning-bg;
-      color: darken($warning, 14%);
-    }
-  }
-
-  &__stock {
-    font-size: $text-xs;
-    color: $ink-muted;
-
-    &--low {
-      color: $danger;
-      font-weight: 700;
-    }
   }
 
   &__switches {
