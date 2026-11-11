@@ -1,41 +1,57 @@
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { adminService } from '@/services/admin.service'
 import { useAdminBadges } from '@/composables/useAdminBadges'
 import { useToastStore } from '@/stores/toast'
-import type { AdminStats, ApiError } from '@/types'
+import type { ApiError, Lead } from '@/types'
 
+const RECENT_LEADS = 5
+
+export interface DashboardStats {
+  products: number
+  published: number
+  featured: number
+  newLeads: number
+  totalLeads: number
+}
+
+/**
+ * El resumen se arma con los mismos endpoints de productos y mensajes que usa
+ * el resto del panel: la web ya no vende, así que no hay métricas de ventas.
+ */
 export function useAdminDashboard() {
-  const stats = ref<AdminStats | null>(null)
+  const stats = ref<DashboardStats | null>(null)
+  const recentLeads = ref<Lead[]>([])
   const loading = ref(true)
   const toast = useToastStore()
-  const { applyStats } = useAdminBadges()
+  const { setNewLeads } = useAdminBadges()
 
   async function load() {
     loading.value = true
-    try {
-      stats.value = await adminService.stats()
-      applyStats(stats.value)
-    } catch (e) {
-      toast.error((e as ApiError).message)
-    } finally {
-      loading.value = false
+    // allSettled: si un endpoint falla, el resto del resumen igual se muestra.
+    const [products, latest, fresh] = await Promise.allSettled([
+      adminService.products(),
+      adminService.leads({ limit: RECENT_LEADS }),
+      adminService.leads({ status: 'new', limit: 1 }),
+    ])
+
+    const list = products.status === 'fulfilled' ? products.value : []
+    const newLeads = fresh.status === 'fulfilled' ? fresh.value.total : 0
+    stats.value = {
+      products: list.length,
+      published: list.filter((p) => p.isPublished).length,
+      featured: list.filter((p) => p.featured).length,
+      newLeads,
+      totalLeads: latest.status === 'fulfilled' ? latest.value.total : 0,
     }
+    recentLeads.value = latest.status === 'fulfilled' ? latest.value.items : []
+    if (fresh.status === 'fulfilled') setNewLeads(newLeads)
+
+    const failed = [products, latest, fresh].find((r) => r.status === 'rejected')
+    if (failed) toast.error(((failed as PromiseRejectedResult).reason as ApiError).message)
+    loading.value = false
   }
-
-  /** Variación porcentual vs. mes anterior; null si no hay base para comparar. */
-  const revenueDelta = computed(() => {
-    const s = stats.value
-    if (!s || !s.revenuePrevMonth) return null
-    return ((s.revenueMonth - s.revenuePrevMonth) / s.revenuePrevMonth) * 100
-  })
-
-  const hasSales = computed(() => {
-    const s = stats.value
-    if (!s) return false
-    return s.ordersMonth > 0 || s.salesByDay.some((d) => d.total > 0) || s.recentOrders.length > 0
-  })
 
   onMounted(load)
 
-  return { stats, loading, load, revenueDelta, hasSales }
+  return { stats, recentLeads, loading, load }
 }
