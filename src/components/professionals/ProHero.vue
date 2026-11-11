@@ -14,36 +14,29 @@ const pieces = [
   { src: '/img/cutouts/enzabiox-blister.png', cls: 'd' },
 ]
 
+// Entrada corta y sin rebotes: solo opacidad y desplazamiento.
 useGsap(root, () => {
-  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
-  tl.from('.pro-hero__copy > *', { y: 40, opacity: 0, duration: 1, stagger: 0.09 })
-    .from('.pro-hero__disc', { scale: 0.5, opacity: 0, duration: 1.4 }, 0.1)
-    .from(
-      '.pro-hero__piece',
-      { y: 120, opacity: 0, rotate: 25, duration: 1.3, ease: 'back.out(1.4)', stagger: 0.1 },
-      0.25,
-    )
-    .from(
-      '.pro-hero__badge',
-      { scale: 0.5, opacity: 0, duration: 0.8, ease: 'back.out(2)', stagger: 0.12 },
-      0.9,
-    )
+  const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.28 } })
+  tl.from('.pro-hero__copy > *', { y: 16, opacity: 0, stagger: 0.05 })
+    .from('.pro-hero__disc', { scale: 0.94, opacity: 0 }, 0.05)
+    .from('.pro-hero__piece', { y: 20, opacity: 0, stagger: 0.05 }, 0.1)
+    .from('.pro-hero__badge', { y: 8, opacity: 0, stagger: 0.06 }, 0.25)
 })
 </script>
 
 <template>
   <section ref="root" class="pro-hero">
     <div class="pro-hero__copy">
-      <p class="pro-hero__eyebrow">
+      <p class="pro-hero__eyebrow eyebrow-cream">
         <i class="fa-solid fa-stethoscope" aria-hidden="true"></i>{{ copy.eyebrow }}
       </p>
       <h1 class="pro-hero__title">{{ copy.title }}</h1>
       <p class="pro-hero__text">{{ copy.text }}</p>
       <div class="pro-hero__actions">
-        <a href="#contacto" class="btn btn--primary btn--lg">
+        <a href="#contacto" class="btn btn--cream btn--lg">
           <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>{{ copy.cta }}
         </a>
-        <a href="#fichas" class="btn btn--light btn--lg">{{ copy.secondary }}</a>
+        <a href="#fichas" class="btn btn--line btn--lg">{{ copy.secondary }}</a>
       </div>
     </div>
 
@@ -61,7 +54,7 @@ useGsap(root, () => {
         ><i class="fa-solid fa-shield-heart"></i>ARCSA</span
       >
       <span class="pro-hero__badge pro-hero__badge--2"
-        ><i class="fa-solid fa-file-medical"></i>Fichas técnicas</span
+        ><i class="fa-solid fa-file-medical"></i>Composición declarada</span
       >
     </div>
   </section>
@@ -88,15 +81,7 @@ useGsap(root, () => {
   }
 
   &__eyebrow {
-    @include flex(row, center, flex-start, 0.5rem);
-    font-size: $text-xs;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: $brand-blue;
-    padding: 0.45rem 0.9rem;
-    border-radius: $radius-pill;
-    background: $brand-blue-soft;
+    @include flex(row, center, flex-start, 0.6rem);
   }
 
   &__title {
@@ -104,11 +89,13 @@ useGsap(root, () => {
     font-weight: 800;
     letter-spacing: -0.05em;
     line-height: 0.98;
+    color: $cream;
   }
 
   &__text {
     font-size: $text-lg;
-    color: $ink-soft;
+    line-height: 1.6;
+    color: $cream-soft;
     max-width: 36rem;
   }
 
@@ -133,15 +120,16 @@ useGsap(root, () => {
     position: absolute;
     inset: 8%;
     border-radius: 50%;
-    background: $brand-blue;
+    // Disco crema: los empaques a color resaltan sobre él como en las fotos.
+    background: $cream;
     box-shadow:
-      0 0 0 1.5rem rgba($brand-blue, 0.08),
-      0 0 0 3rem rgba($brand-blue, 0.04);
+      0 0 0 1.5rem rgba($cream, 0.06),
+      0 0 0 3rem rgba($cream, 0.03);
   }
 
   &__piece {
     position: absolute;
-    filter: drop-shadow(0 24px 22px rgba($ink, 0.3));
+    filter: drop-shadow(0 18px 18px rgba($forest-deep, 0.35));
 
     &--a {
       width: 22%;
@@ -177,14 +165,15 @@ useGsap(root, () => {
     @include flex(row, center, flex-start, 0.45rem);
     padding: 0.55rem 0.95rem;
     border-radius: $radius-pill;
-    background: $surface;
-    box-shadow: $shadow-md;
+    background: $forest-deep;
+    border: 1px solid $cream-line;
+    color: $cream;
     font-size: $text-sm;
     font-weight: 700;
     white-space: nowrap;
 
     i {
-      color: $accent;
+      color: $cream-soft;
     }
 
     &--1 {
