@@ -20,7 +20,7 @@ const telHref = `tel:+${site.whatsapp}`
         <a
           v-if="site.whatsapp"
           :href="whatsappLink()"
-          class="btn btn--primary"
+          class="btn btn--cream"
           target="_blank"
           rel="noopener"
         >
@@ -76,8 +76,9 @@ const telHref = `tel:+${site.whatsapp}`
 .footer {
   position: relative;
   overflow: hidden;
-  background: $ink;
-  color: rgba(255, 255, 255, 0.78);
+  background: $forest-deep;
+  color: $cream-soft;
+  border-top: 1px solid $cream-line;
   margin-top: auto;
 
   &__glow {
@@ -87,7 +88,7 @@ const telHref = `tel:+${site.whatsapp}`
     top: -18rem;
     right: -10rem;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba($accent, 0.35), transparent 65%);
+    background: radial-gradient(circle, rgba($cream, 0.06), transparent 65%);
     pointer-events: none;
   }
 
@@ -109,7 +110,7 @@ const telHref = `tel:+${site.whatsapp}`
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.25;
-    color: $surface;
+    color: $cream;
     max-width: 22ch;
   }
 
@@ -120,24 +121,24 @@ const telHref = `tel:+${site.whatsapp}`
     a,
     span {
       @include flex(row, center, flex-start, 0.6rem);
-      color: rgba(255, 255, 255, 0.75);
+      color: $cream-soft;
       transition: color 0.25s ease;
       overflow-wrap: anywhere;
     }
 
     a:hover {
-      color: $lime;
+      color: $cream;
     }
 
     i {
-      color: $lime;
+      color: $cream-muted;
       width: 1rem;
     }
   }
 
   &__heading {
     @include eyebrow;
-    color: rgba(255, 255, 255, 0.5);
+    color: $cream-muted;
     margin-bottom: 0.4rem;
   }
 
@@ -146,7 +147,7 @@ const telHref = `tel:+${site.whatsapp}`
     @include container(1280px);
     font-size: $text-xs;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.5);
+    color: $cream-muted;
     padding-bottom: 1.8rem;
   }
 
@@ -156,15 +157,15 @@ const telHref = `tel:+${site.whatsapp}`
     @include flex(row, center, space-between, 1rem);
     flex-wrap: wrap;
     padding-block: 1.3rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid $cream-line;
     font-size: $text-xs;
-    color: rgba(255, 255, 255, 0.55);
+    color: $cream-muted;
 
     a {
-      color: rgba(255, 255, 255, 0.8);
+      color: $cream-soft;
 
       &:hover {
-        color: $lime;
+        color: $cream;
       }
     }
   }
@@ -175,7 +176,7 @@ const telHref = `tel:+${site.whatsapp}`
   }
 
   &__admin {
-    color: rgba(255, 255, 255, 0.4) !important;
+    color: $cream-muted !important;
   }
 
   &__giant {
@@ -185,7 +186,7 @@ const telHref = `tel:+${site.whatsapp}`
     letter-spacing: -0.06em;
     line-height: 0.78;
     text-align: center;
-    color: rgba(255, 255, 255, 0.05);
+    color: rgba($cream, 0.05);
     user-select: none;
     margin-bottom: -0.08em;
   }
