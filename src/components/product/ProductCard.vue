@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Product } from '@/types'
-import { catalogCopy, productPhotos } from '@/config/info.copy'
+import { catalogCopy, productHandPhotos, productPhotos } from '@/config/info.copy'
 
 /**
  * Tarjeta informativa: foto de la caja sobre crema, nombre, para qué sirve y
@@ -16,16 +16,27 @@ const to = computed(() => `/productos/${props.product.slug}`)
 const photo = computed(
   () => productPhotos[props.product.slug] ?? props.product.images[0] ?? '/img/placeholder.svg',
 )
+const handPhoto = computed(() => productHandPhotos[props.product.slug])
 const fullName = computed(() => `${props.product.name} ${props.product.nameAccent}`.trim())
 </script>
 
 <template>
   <RouterLink :to="to" class="card" :class="{ 'card--compact': compact }">
-    <span class="card__photo">
+    <span class="card__photo" :class="{ 'card__photo--swap': handPhoto }">
       <img
         :src="photo"
         :alt="`Caja de ${fullName}`"
         :loading="eager ? 'eager' : 'lazy'"
+        decoding="async"
+        width="900"
+        height="1200"
+      />
+      <img
+        v-if="handPhoto"
+        :src="handPhoto"
+        alt=""
+        class="card__hand"
+        loading="lazy"
         decoding="async"
         width="900"
         height="1200"
@@ -70,6 +81,15 @@ const fullName = computed(() => `${props.product.name} ${props.product.nameAccen
       transform: scale(1.04);
     }
 
+    // Con foto en mano, el hover cambia de foto en vez de hacer zoom.
+    &:hover .card__hand {
+      opacity: 1;
+    }
+
+    &:hover .card__photo--swap img:not(.card__hand) {
+      opacity: 0;
+    }
+
     &:hover .card__more i {
       transform: translateX(4px);
     }
@@ -89,9 +109,21 @@ const fullName = computed(() => `${props.product.name} ${props.product.nameAccen
       height: 100%;
       object-fit: contain;
       mix-blend-mode: multiply;
-      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      transition:
+        opacity 0.35s ease,
+        transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    // Foto en mano encima de la caja, oculta hasta el hover (solo con mouse;
+    // en celular se ve la caja).
+    .card__hand {
+      position: absolute;
+      inset: 0;
+      object-fit: cover;
+      opacity: 0;
     }
   }
+
 
   &__body {
     flex: 1;

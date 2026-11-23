@@ -99,6 +99,14 @@ export const productPhotos: Record<string, string> = {
   somnycad: '/img/products/somnycad/00-principal.webp',
 }
 
+/** Foto en mano que aparece al pasar el mouse por la tarjeta (estilo Cantabria). */
+export const productHandPhotos: Record<string, string> = {
+  'abcvit-kiddi': '/img/products/abcvit-kiddi/09-mano.webp',
+  'expultox-forte': '/img/products/expultox-forte/09-mano.webp',
+  enzabiox: '/img/products/enzabiox/06-mano.webp',
+  somnycad: '/img/products/somnycad/06-mano.webp',
+}
+
 export const catalogCopy = {
   eyebrow: 'Nuestros productos',
   title: 'Conoce la línea CadPharm.',
