@@ -8,17 +8,17 @@ const copy = professionalsCopy.hero
 const root = ref<HTMLElement | null>(null)
 
 const pieces = [
-  { src: '/img/cutouts/abcvit-kiddi-frasco.png', cls: 'a' },
-  { src: '/img/cutouts/expultox-forte-frasco.png', cls: 'b' },
-  { src: '/img/cutouts/somnycad-blister.png', cls: 'c' },
-  { src: '/img/cutouts/enzabiox-blister.png', cls: 'd' },
+  { src: '/img/cutouts/somnycad.png', cls: 'box' },
+  { src: '/img/cutouts/abcvit-kiddi-frasco.png', cls: 'bottle' },
+  { src: '/img/cutouts/expultox-forte-frasco.png', cls: 'bottle' },
+  { src: '/img/cutouts/enzabiox.png', cls: 'box' },
 ]
 
 // Entrada corta y sin rebotes: solo opacidad y desplazamiento.
 useGsap(root, () => {
   const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 0.28 } })
   tl.from('.pro-hero__copy > *', { y: 16, opacity: 0, stagger: 0.05 })
-    .from('.pro-hero__disc', { scale: 0.94, opacity: 0 }, 0.05)
+    .from('.pro-hero__shelf', { opacity: 0 }, 0.05)
     .from('.pro-hero__piece', { y: 20, opacity: 0, stagger: 0.05 }, 0.1)
     .from('.pro-hero__badge', { y: 8, opacity: 0, stagger: 0.06 }, 0.25)
 })
@@ -41,7 +41,8 @@ useGsap(root, () => {
     </div>
 
     <div class="pro-hero__art" aria-hidden="true">
-      <span class="pro-hero__disc"></span>
+      <span class="pro-hero__shelf"></span>
+      <div class="pro-hero__row">
       <img
         v-for="piece in pieces"
         :key="piece.src"
@@ -50,6 +51,7 @@ useGsap(root, () => {
         class="pro-hero__piece"
         :class="`pro-hero__piece--${piece.cls}`"
       />
+      </div>
       <span class="pro-hero__badge pro-hero__badge--1"
         ><i class="fa-solid fa-shield-heart"></i>ARCSA</span
       >
@@ -107,8 +109,8 @@ useGsap(root, () => {
   &__art {
     position: relative;
     width: 100%;
-    max-width: 28rem;
-    aspect-ratio: 1;
+    max-width: 34rem;
+    aspect-ratio: 4 / 3;
     margin-inline: auto;
 
     @include from('lg') {
@@ -116,47 +118,38 @@ useGsap(root, () => {
     }
   }
 
-  &__disc {
+  // Panel crema: los empaques a color resaltan sobre él, como una vitrina.
+  &__shelf {
     position: absolute;
-    inset: 8%;
-    border-radius: 50%;
-    // Disco crema: los empaques a color resaltan sobre él como en las fotos.
+    inset: 0;
+    border-radius: $radius-md;
     background: $cream;
-    box-shadow:
-      0 0 0 1.5rem rgba($cream, 0.06),
-      0 0 0 3rem rgba($cream, 0.03);
+  }
+
+  // Los 4 productos de pie en fila, apoyados en la misma base (pedido del cliente).
+  &__row {
+    position: absolute;
+    inset: 16% 5% 20%;
+    @include flex(row, flex-end, center, 0);
   }
 
   &__piece {
-    position: absolute;
-    filter: drop-shadow(0 18px 18px rgba($forest-deep, 0.35));
+    min-width: 0;
+    height: auto;
+    filter: drop-shadow(0 14px 14px rgba($forest-deep, 0.3));
 
-    &--a {
-      width: 22%;
-      left: 22%;
-      top: 14%;
-      transform: rotate(-8deg);
+    & + & {
+      margin-left: -3%;
     }
 
-    &--b {
-      width: 22%;
-      left: 52%;
-      top: 18%;
-      transform: rotate(7deg);
+    &--bottle {
+      flex: 0 1 19%;
+      position: relative;
+      z-index: 1;
     }
 
-    &--c {
-      width: 36%;
-      left: 8%;
-      top: 52%;
-      transform: rotate(-14deg);
-    }
-
-    &--d {
-      width: 36%;
-      left: 54%;
-      top: 50%;
-      transform: rotate(12deg);
+    &--box {
+      flex: 0 1 34%;
     }
   }
 

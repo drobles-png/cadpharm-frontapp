@@ -118,8 +118,9 @@ const [primary, secondary, wide] = copy.photos
     overflow: hidden;
     background: $forest-deep;
 
+    // Las tres en una fila: la de ABCVIT a todo el ancho se veía enorme (pedido del cliente).
     @include from('md') {
-      flex: 1 1 calc(50% - 0.5rem);
+      flex: 1 1 calc(33.333% - 0.67rem);
     }
 
     img {
@@ -139,16 +140,6 @@ const [primary, secondary, wide] = copy.photos
       font-weight: 600;
       color: $cream;
       background: linear-gradient(0deg, rgba($forest-deep, 0.85), transparent);
-    }
-
-    &--wide {
-      @include from('md') {
-        flex-basis: 100%;
-
-        img {
-          aspect-ratio: 21 / 8;
-        }
-      }
     }
   }
 
