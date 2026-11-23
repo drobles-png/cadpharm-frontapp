@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { homeHero as copy } from '@/config/info.copy'
 import { useAutoplay } from '@/composables/useAutoplay'
 
-const SLIDE_MS = 3000
+const SLIDE_MS = 7000
 
 const slides = copy.slides
 const count = computed(() => slides.length)
